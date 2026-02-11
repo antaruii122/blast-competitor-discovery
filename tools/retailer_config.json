@@ -1,0 +1,86 @@
+{
+    "chile": {
+        "whitelist": [
+            "pcfactory.cl",
+            "spdigital.cl",
+            "winpy.cl",
+            "ttchile.cl",
+            "zmart.cl"
+        ],
+        "blacklist": [
+            "mercadolibre.cl",
+            "solotodo.cl",
+            "falabella.com",
+            "paris.cl",
+            "ripley.cl",
+            "linio.cl",
+            "knasta.cl"
+        ]
+    },
+    "brazil": {
+        "whitelist": [
+            "kabum.com.br",
+            "pichau.com.br",
+            "terabyteshop.com.br",
+            "kalunga.com.br"
+        ],
+        "blacklist": [
+            "mercadolivre.com.br",
+            "amazon.com.br",
+            "americanas.com.br",
+            "magazineluiza.com.br",
+            "zoom.com.br",
+            "buscape.com.br"
+        ]
+    },
+    "mexico": {
+        "whitelist": [
+            "cyberpuerta.mx",
+            "ddtech.mx",
+            "zegucom.com.mx"
+        ],
+        "blacklist": [
+            "mercadolibre.com.mx",
+            "amazon.com.mx",
+            "linio.com.mx"
+        ]
+    },
+    "colombia": {
+        "whitelist": [
+            "tauretcomputadores.com",
+            "clonesyperifericos.com",
+            "speedlogic.com.co"
+        ],
+        "blacklist": [
+            "mercadolibre.com.co",
+            "linio.com.co",
+            "exito.com",
+            "falabella.com.co"
+        ]
+    },
+    "argentina": {
+        "whitelist": [
+            "compragamer.com",
+            "gezatek.com.ar",
+            "venex.com.ar"
+        ],
+        "blacklist": [
+            "mercadolibre.com.ar",
+            "fravega.com",
+            "musimundo.com"
+        ]
+    },
+    "peru": {
+        "whitelist": [
+            "cyccomputer.pe",
+            "impacto.com.pe",
+            "infotec.com.pe"
+        ],
+        "blacklist": [
+            "mercadolibre.com.pe",
+            "linio.com.pe",
+            "falabella.com.pe",
+            "ripley.com.pe"
+        ]
+    }
+}

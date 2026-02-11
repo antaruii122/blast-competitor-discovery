@@ -1,0 +1,4 @@
+id,product_name,category,price_latam,specs_json
+uuid-1,MSI Mag Forge 100R,case,50000,"{""form_factor"": ""ATX"", ""fan_count_preinstalled"": 2}"
+uuid-2,Logitech G Pro X,keyboard,120000,"{""switch_type"": ""Mechanical"", ""connection_type"": ""Wired"", ""polling_rate_hz"": 1000}"
+uuid-3,Samsung Odyssey G5,monitor,280000,"{""panel_type"": ""VA"", ""screen_curvature"": ""Curved"", ""refresh_rate_hz"": 144, ""size_inch"": 27, ""resolution_width"": 2560}"
