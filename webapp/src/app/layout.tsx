@@ -1,15 +1,16 @@
+'use client';
+
 import type { Metadata } from "next";
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import theme from '@/theme/theme';
 import Navbar from '@/components/Navbar';
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "B.L.A.S.T. Intelligence - Competitor Discovery Platform",
-  description: "AI-powered competitor discovery and price tracking for hardware products",
-};
+// Note: In production, move this to environment variable
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
 
 export default function RootLayout({
   children,
@@ -19,13 +20,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <Navbar />
-            {children}
-          </ThemeProvider>
-        </AppRouterCacheProvider>
+        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+          <AppRouterCacheProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <Navbar />
+              {children}
+            </ThemeProvider>
+          </AppRouterCacheProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );
