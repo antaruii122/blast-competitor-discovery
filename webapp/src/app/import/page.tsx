@@ -1,16 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, Typography, Box, Button, Stepper, Step, StepLabel, Alert } from '@mui/material';
+import { Container, Typography, Box, Button, Stepper, Step, StepLabel, Alert, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import GoogleAuth from '@/components/GoogleAuth';
 import SheetUrlInput from '@/components/SheetUrlInput';
 import SheetSelector from '@/components/SheetSelector';
 import SheetPreview from '@/components/SheetPreview';
 import ColumnMapping from '@/components/ColumnMapping';
-import { getSpreadsheetMetadata, readSpreadsheet, isUserSignedIn } from '@/lib/googleSheets/client';
+import CatalogPreview from '@/components/CatalogPreview';
+import ImportProgressIndicator, { ImportProgress } from '@/components/ImportProgressIndicator';
+import { getSpreadsheetMetadata, readSpreadsheet } from '@/lib/googleSheets/client';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
-const steps = ['Connect Google', 'Select Sheet', 'Preview Data', 'Map Columns', 'Start Import'];
+const steps = ['Connect Google', 'Select Sheet', 'Preview Data', 'Map Columns', 'Review Catalog', 'Import'];
 
 export default function ImportPage() {
     const [activeStep, setActiveStep] = useState(0);
@@ -24,6 +26,16 @@ export default function ImportPage() {
     const [columnMapping, setColumnMapping] = useState<Record<string, string>>({});
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [showProgressDialog, setShowProgressDialog] = useState(false);
+    const [importProgress, setImportProgress] = useState<ImportProgress>({
+        status: 'idle',
+        currentStep: 0,
+        totalSteps: 5,
+        processedProducts: 0,
+        totalProducts: 0,
+        message: 'Preparing import...'
+    });
 
     // Step 1: Authentication
     const handleAuthChange = (authenticated: boolean) => {
@@ -93,21 +105,73 @@ export default function ImportPage() {
 
     // Step 5: Start import process
     const handleStartImport = async () => {
-        console.log('[Import] Starting import with:', {
-            spreadsheetId,
-            selectedSheet,
-            columnMapping,
-            totalRows: sheetData.length - 1 // Exclude header
+        setIsImporting(true);
+        setShowProgressDialog(true);
+        setError(null);
+
+        const totalProducts = sheetData.length - 1;
+
+        setImportProgress({
+            status: 'processing',
+            currentStep: 0,
+            totalSteps: 5,
+            processedProducts: 0,
+            totalProducts,
+            message: 'Starting import...'
         });
 
-        // TODO: Implement actual import logic in Phase 3
-        alert('Import functionality will be implemented in Phase 3!');
+        try {
+            // Call the API to start the import
+            const response = await fetch('/api/import', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    data: sheetData,
+                    columnMapping,
+                    spreadsheetId,
+                    sheetTitle: selectedSheet
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Import failed');
+            }
+
+            // Success!
+            setImportProgress({
+                status: 'complete',
+                currentStep: 5,
+                totalSteps: 5,
+                processedProducts: totalProducts,
+                totalProducts,
+                message: 'Import completed successfully!'
+            });
+
+            setActiveStep(5);
+
+        } catch (err: any) {
+            console.error('[Import] Error:', err);
+            setError(err.message || 'Import failed');
+            setImportProgress({
+                ...importProgress,
+                status: 'error',
+                message: 'Import failed',
+                error: err.message
+            });
+        } finally {
+            setIsImporting(false);
+        }
     };
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}> <Typography variant="h4" sx={{ mb: 3, color: '#c9d1d9' }}>
-            Import Catalog from Google Sheets
-        </Typography>
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Typography variant="h4" sx={{ mb: 3, color: '#c9d1d9' }}>
+                Import Catalog from Google Sheets
+            </Typography>
 
             <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
                 {steps.map((label) => (
@@ -174,8 +238,19 @@ export default function ImportPage() {
                 </Box>
             )}
 
-            {/* Step 6: Start Import */}
-            {activeStep >= 4 && (
+            {/* Step 6: Catalog Preview */}
+            {activeStep >= 4 && sheetData.length > 0 && (
+                <Box sx={{ mb: 3 }}>
+                    <CatalogPreview
+                        data={sheetData}
+                        columnMapping={columnMapping}
+                        maxRows={20}
+                    />
+                </Box>
+            )}
+
+            {/* Start Import Button */}
+            {activeStep >= 4 && !isImporting && (
                 <Box sx={{ textAlign: 'center', mt: 4 }}>
                     <Button
                         variant="contained"
@@ -192,10 +267,37 @@ export default function ImportPage() {
                         Start Competitor Matching ({sheetData.length - 1} products)
                     </Button>
                     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
-                        This will invoke the Python backend to match competitors
+                        This will invoke the Python backend to match competitors globally
                     </Typography>
                 </Box>
             )}
+
+            {/* Progress Dialog */}
+            <Dialog
+                open={showProgressDialog}
+                maxWidth="md"
+                fullWidth
+                onClose={() => !isImporting && setShowProgressDialog(false)}
+            >
+                <DialogTitle>
+                    Import Progress
+                </DialogTitle>
+                <DialogContent>
+                    <ImportProgressIndicator progress={importProgress} />
+
+                    {importProgress.status === 'complete' && (
+                        <Box sx={{ textAlign: 'center', mt: 3 }}>
+                            <Button
+                                variant="contained"
+                                onClick={() => setShowProgressDialog(false)}
+                                sx={{ textTransform: 'none' }}
+                            >
+                                View Results
+                            </Button>
+                        </Box>
+                    )}
+                </DialogContent>
+            </Dialog>
         </Container>
     );
 }
