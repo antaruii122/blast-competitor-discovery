@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Grid2, Card, CardContent, Button } from '@mui/material';
+import { Box, Container, Typography, Card, CardContent, Button } from '@mui/material';
 import Link from 'next/link';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
@@ -41,9 +41,9 @@ export default function Home() {
         </Typography>
       </Box>
 
-      <Grid2 container spacing={4} sx={{ mb: 6 }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4, mb: 6 }}>
         {features.map((feature) => (
-          <Grid2 size={{ xs: 12, md: 4 }} key={feature.title}>
+          <Box key={feature.title} sx={{ flex: { xs: '1 1 100%', md: '1 1 calc(33.333% - 32px)' } }}>
             <Card
               sx={{
                 height: '100%',
@@ -81,9 +81,9 @@ export default function Home() {
                 </Button>
               </CardContent>
             </Card>
-          </Grid>
+          </Box>
         ))}
-      </Grid>
+      </Box>
 
       <Box sx={{ textAlign: 'center', py: 4, borderTop: '1px solid #30363d' }}>
         <Typography variant="body2" sx={{ color: '#8b949e' }}>
