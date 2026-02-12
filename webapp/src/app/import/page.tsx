@@ -126,18 +126,18 @@ export default function ImportPage() {
     };
 
     // Column mapping handler
-    const handleMappingChange = (mapping: Record<string, string>) => {
-        setColumnMapping(mapping);
+    const handleMappingChange = (mapping: Record<string, string | string[]>) => {
+        setColumnMapping(mapping as Record<string, string>);
 
-        // Check if all required fields are mapped
-        const requiredFields = ['product_name', 'category', 'specs_json'];
-        const allMapped = requiredFields.every(field => mapping[field]);
+        // Check if model and specifications are mapped
+        const hasModel = mapping.model && (mapping.model as string).length > 0;
+        const hasSpecs = mapping.specifications && (mapping.specifications as string[]).length > 0;
 
-        // Move to catalog preview step
+        // Move to catalog preview step when both are set
         const mappingStep = importMode === 'google' ? 3 : 2;
         const previewStep = importMode === 'google' ? 4 : 3;
 
-        if (allMapped && activeStep === mappingStep) {
+        if (hasModel && hasSpecs && activeStep === mappingStep) {
             setActiveStep(previewStep);
         }
     };

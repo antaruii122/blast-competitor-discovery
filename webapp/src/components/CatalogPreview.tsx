@@ -15,10 +15,11 @@ import {
 } from '@mui/material';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SearchIcon from '@mui/icons-material/Search';
 
 interface CatalogPreviewProps {
     data: any[][];
-    columnMapping: Record<string, string>;
+    columnMapping: Record<string, any>;
     maxRows?: number;
 }
 
@@ -36,80 +37,71 @@ export default function CatalogPreview({ data, columnMapping, maxRows = 20 }: Ca
     const totalProducts = data.length - 1;
     const hasMore = totalProducts > maxRows;
 
-    // Get mapped column indices
-    const productNameIdx = headers.indexOf(columnMapping.product_name);
-    const categoryIdx = headers.indexOf(columnMapping.category);
-    const brandIdx = columnMapping.brand ? headers.indexOf(columnMapping.brand) : -1;
-    const modelIdx = columnMapping.model ? headers.indexOf(columnMapping.model) : -1;
-    const specsIdx = headers.indexOf(columnMapping.specs_json);
+    // Get mapped column indices for simplified mapping (model + specifications)
+    const modelColumn = columnMapping.model as string;
+    const specColumns = (columnMapping.specifications as string[]) || [];
+
+    const modelIdx = modelColumn ? headers.indexOf(modelColumn) : -1;
+    const specIndices = specColumns.map(col => headers.indexOf(col)).filter(idx => idx >= 0);
+
+    // Build combined specifications for each row
+    const getSpecsText = (row: any[]): string => {
+        const specs = specIndices.map(idx => row[idx]).filter(val => val !== undefined && val !== null && String(val).trim());
+        return specs.join(' | ');
+    };
 
     return (
-        <Paper sx={{ border: '1px solid #30363d' }}>
+        <Paper sx={{ border: '1px solid #30363d', bgcolor: '#161b22' }}>
             <Box sx={{
                 p: 2,
                 borderBottom: '1px solid #30363d',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                bgcolor: 'rgba(88, 166, 255, 0.05)'
+                bgcolor: '#0d1117'
             }}>
-                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <InventoryIcon />
-                    Catalog Preview
+                <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#c9d1d9' }}>
+                    <InventoryIcon sx={{ color: '#58a6ff' }} />
+                    Review Catalog
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     <Chip
                         icon={<CheckCircleIcon />}
-                        label={`${totalProducts} products ready`}
+                        label={`${totalProducts} products ready to search`}
                         size="medium"
                         sx={{ bgcolor: 'rgba(35, 134, 54, 0.2)', color: '#238636', fontWeight: 600 }}
                     />
                 </Box>
             </Box>
 
-            <Alert severity="info" sx={{ m: 2 }}>
-                Preview of products that will be sent to competitor matching engine.
-                Each product will be analyzed to find technically equivalent competitors.
+            <Alert
+                severity="info"
+                icon={<SearchIcon />}
+                sx={{ m: 2, bgcolor: 'rgba(88, 166, 255, 0.1)', color: '#c9d1d9' }}
+            >
+                Each product will be searched using the <strong>Model</strong> and <strong>Specifications</strong> you selected.
+                The system will find technically equivalent competitor products worldwide.
             </Alert>
 
-            <TableContainer sx={{ maxHeight: 600 }}>
+            <TableContainer sx={{ maxHeight: 500 }}>
                 <Table stickyHeader size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 50 }}>
+                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 50, color: '#c9d1d9' }}>
                                 #
                             </TableCell>
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 200 }}>
-                                Product Name
+                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 150, color: '#c9d1d9' }}>
+                                Model ({modelColumn || 'Not Set'})
                             </TableCell>
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 120 }}>
-                                Category
-                            </TableCell>
-                            {brandIdx >= 0 && (
-                                <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 100 }}>
-                                    Brand
-                                </TableCell>
-                            )}
-                            {modelIdx >= 0 && (
-                                <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 120 }}>
-                                    Model
-                                </TableCell>
-                            )}
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 150 }}>
-                                Specifications
+                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, color: '#c9d1d9' }}>
+                                Specifications ({specColumns.length} columns)
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {rows.map((row, rowIndex) => {
-                            const specs = row[specsIdx];
-                            let specCount = 0;
-                            try {
-                                const specsObj = typeof specs === 'string' ? JSON.parse(specs) : specs;
-                                specCount = Object.keys(specsObj).length;
-                            } catch (e) {
-                                // Invalid JSON, ignore
-                            }
+                            const model = modelIdx >= 0 ? row[modelIdx] : '-';
+                            const specsText = getSpecsText(row);
 
                             return (
                                 <TableRow
@@ -119,33 +111,25 @@ export default function CatalogPreview({ data, columnMapping, maxRows = 20 }: Ca
                                         '&:hover': { bgcolor: 'rgba(88, 166, 255, 0.05)' }
                                     }}
                                 >
-                                    <TableCell sx={{ color: 'text.secondary', fontFamily: 'monospace' }}>
+                                    <TableCell sx={{ color: '#8b949e', fontFamily: 'monospace' }}>
                                         {rowIndex + 1}
                                     </TableCell>
-                                    <TableCell sx={{ fontWeight: 500 }}>
-                                        {row[productNameIdx] || '-'}
+                                    <TableCell sx={{
+                                        fontWeight: 600,
+                                        fontFamily: 'monospace',
+                                        color: '#58a6ff',
+                                        fontSize: '0.95em'
+                                    }}>
+                                        {model || '-'}
                                     </TableCell>
-                                    <TableCell>
-                                        <Chip
-                                            label={row[categoryIdx] || 'Unknown'}
-                                            size="small"
-                                            sx={{ bgcolor: 'rgba(88, 166, 255, 0.1)', color: '#58a6ff' }}
-                                        />
-                                    </TableCell>
-                                    {brandIdx >= 0 && (
-                                        <TableCell>{row[brandIdx] || '-'}</TableCell>
-                                    )}
-                                    {modelIdx >= 0 && (
-                                        <TableCell sx={{ fontFamily: 'monospace', fontSize: '0.9em' }}>
-                                            {row[modelIdx] || '-'}
-                                        </TableCell>
-                                    )}
-                                    <TableCell>
-                                        <Chip
-                                            label={`${specCount} specs`}
-                                            size="small"
-                                            sx={{ bgcolor: 'rgba(35, 134, 54, 0.1)', color: '#238636' }}
-                                        />
+                                    <TableCell sx={{
+                                        color: '#c9d1d9',
+                                        fontSize: '0.9em',
+                                        maxWidth: 500,
+                                        whiteSpace: 'normal',
+                                        wordBreak: 'break-word'
+                                    }}>
+                                        {specsText || <em style={{ color: '#6e7681' }}>No specifications</em>}
                                     </TableCell>
                                 </TableRow>
                             );
@@ -156,7 +140,7 @@ export default function CatalogPreview({ data, columnMapping, maxRows = 20 }: Ca
 
             {hasMore && (
                 <Box sx={{ p: 2, borderTop: '1px solid #30363d', textAlign: 'center' }}>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" sx={{ color: '#8b949e' }}>
                         Showing {rows.length} of {totalProducts} products (all will be processed)
                     </Typography>
                 </Box>
