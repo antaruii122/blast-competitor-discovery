@@ -31,7 +31,6 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
     if (spreadsheetId) {
         const getPreviewUrl = () => {
             const cacheBuster = `${Date.now()}_${iframeKey}`;
-            // Use /preview URL for read-only view with full formatting
             return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/preview?t=${cacheBuster}`;
         };
 
@@ -88,7 +87,7 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
         );
     }
 
-    // Local data preview - Excel/Google Sheets style table
+    // Local data preview - Excel style table
     if (!data || data.length === 0) {
         return (
             <Paper sx={{ p: 3, border: '1px solid #30363d', textAlign: 'center' }}>
@@ -100,6 +99,23 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
     const displayRows = data.slice(0, maxRows + 1);
     const totalRows = data.length;
     const totalCols = Math.max(...data.map(row => row?.length || 0));
+
+    // Detect if row looks like a title row (mostly empty cells, one main text)
+    const isTitleRow = (row: any[], rowIdx: number) => {
+        if (rowIdx > 1) return false;
+        const nonEmptyCells = row.filter(cell => cell !== undefined && cell !== null && String(cell).trim() !== '');
+        return nonEmptyCells.length === 1 && String(nonEmptyCells[0]).length > 3;
+    };
+
+    // Detect if row looks like a header row (multiple short texts)
+    const isHeaderRow = (row: any[], rowIdx: number) => {
+        if (rowIdx > 2) return false;
+        const nonEmptyCells = row.filter(cell => cell !== undefined && cell !== null && String(cell).trim() !== '');
+        if (nonEmptyCells.length < 2) return false;
+        // Check if cells look like column headers (short text, often single words)
+        const avgLength = nonEmptyCells.reduce((acc, cell) => acc + String(cell).length, 0) / nonEmptyCells.length;
+        return avgLength < 30;
+    };
 
     return (
         <Paper sx={{ border: '1px solid #30363d', borderRadius: 2, overflow: 'hidden' }}>
@@ -130,7 +146,7 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                 sx={{
                     overflow: 'auto',
                     maxHeight: 550,
-                    bgcolor: '#e0e0e0', // Gray area around the sheet
+                    bgcolor: '#e0e0e0',
                 }}
             >
                 <table
@@ -139,12 +155,12 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                         width: '100%',
                         tableLayout: 'auto',
                         fontFamily: 'Calibri, Arial, sans-serif',
-                        fontSize: '11px',
+                        fontSize: '12px',
                         backgroundColor: '#ffffff',
                     }}
                 >
                     <thead>
-                        {/* Column letter headers (A, B, C...) - Excel gray style */}
+                        {/* Column letter headers (A, B, C...) */}
                         <tr>
                             <th
                                 style={{
@@ -153,9 +169,9 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                                     left: 0,
                                     zIndex: 4,
                                     backgroundColor: '#f3f3f3',
-                                    borderRight: '1px solid #c0c0c0',
-                                    borderBottom: '1px solid #c0c0c0',
-                                    padding: '3px 2px',
+                                    borderRight: '1px solid #b0b0b0',
+                                    borderBottom: '1px solid #b0b0b0',
+                                    padding: '4px 2px',
                                     minWidth: '46px',
                                     width: '46px',
                                     textAlign: 'center',
@@ -172,10 +188,10 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                                         top: 0,
                                         zIndex: 3,
                                         backgroundColor: '#f3f3f3',
-                                        borderRight: '1px solid #c0c0c0',
-                                        borderBottom: '1px solid #c0c0c0',
-                                        padding: '3px 8px',
-                                        minWidth: '120px',
+                                        borderRight: '1px solid #b0b0b0',
+                                        borderBottom: '1px solid #b0b0b0',
+                                        padding: '4px 8px',
+                                        minWidth: colIdx === 2 ? '250px' : '150px', // Wider spec column
                                         textAlign: 'center',
                                         fontWeight: 400,
                                         color: '#595959',
@@ -189,20 +205,21 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                     </thead>
                     <tbody>
                         {displayRows.map((row, rowIdx) => {
-                            const isFirstDataRow = rowIdx === 0;
+                            const titleRow = isTitleRow(row, rowIdx);
+                            const headerRow = isHeaderRow(row, rowIdx);
 
                             return (
                                 <tr key={`row-${rowIdx}`}>
-                                    {/* Row number - Excel gray style */}
+                                    {/* Row number */}
                                     <td
                                         style={{
                                             position: 'sticky',
                                             left: 0,
                                             zIndex: 2,
                                             backgroundColor: '#f3f3f3',
-                                            borderRight: '1px solid #c0c0c0',
-                                            borderBottom: '1px solid #e0e0e0',
-                                            padding: '3px 2px',
+                                            borderRight: '1px solid #b0b0b0',
+                                            borderBottom: '1px solid #d0d0d0',
+                                            padding: '4px 2px',
                                             textAlign: 'center',
                                             fontWeight: 400,
                                             color: '#595959',
@@ -221,27 +238,44 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                                             : '';
                                         const hasNewlines = displayValue.includes('\n');
 
-                                        // Style first row as header (yellow background like Excel)
-                                        const isHeaderStyle = isFirstDataRow && displayValue.length > 0;
+                                        // Styling based on row type
+                                        let bgColor = '#ffffff';
+                                        let fontWeight = 400;
+                                        let fontSize = '12px';
+                                        let textAlign: 'left' | 'center' = 'left';
+                                        let borderColor = '#d0d0d0';
+
+                                        if (titleRow && displayValue.length > 0) {
+                                            bgColor = '#fff2cc'; // Yellow for title
+                                            fontWeight = 700;
+                                            fontSize = '16px';
+                                            textAlign = 'center';
+                                        } else if (headerRow) {
+                                            bgColor = '#fef9e7'; // Light yellow for headers
+                                            fontWeight = 700;
+                                            fontSize = '12px';
+                                            textAlign = 'center';
+                                            borderColor = '#217346'; // Green border like Excel
+                                        }
 
                                         return (
                                             <td
                                                 key={`cell-${rowIdx}-${colIdx}`}
                                                 style={{
-                                                    backgroundColor: isHeaderStyle ? '#fff2cc' : '#ffffff',
-                                                    borderRight: '1px solid #e0e0e0',
-                                                    borderBottom: '1px solid #e0e0e0',
-                                                    padding: '6px 8px',
-                                                    minWidth: '120px',
-                                                    maxWidth: '400px',
+                                                    backgroundColor: bgColor,
+                                                    borderRight: `1px solid ${borderColor}`,
+                                                    borderBottom: `1px solid ${borderColor}`,
+                                                    padding: '8px 10px',
+                                                    minWidth: colIdx === 2 ? '250px' : '150px',
+                                                    maxWidth: '450px',
                                                     verticalAlign: 'middle',
                                                     whiteSpace: hasNewlines ? 'pre-wrap' : 'normal',
                                                     wordBreak: 'break-word',
-                                                    fontWeight: isHeaderStyle ? 700 : 400,
+                                                    fontWeight: fontWeight,
                                                     color: '#000000',
-                                                    fontSize: '11px',
-                                                    lineHeight: '1.4',
-                                                    textAlign: isHeaderStyle ? 'center' : 'left',
+                                                    fontSize: fontSize,
+                                                    lineHeight: '1.5',
+                                                    textAlign: textAlign,
                                                 }}
                                             >
                                                 {displayValue}
@@ -260,7 +294,7 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                 <Box sx={{
                     p: 1,
                     bgcolor: '#f3f3f3',
-                    borderTop: '1px solid #c0c0c0',
+                    borderTop: '1px solid #b0b0b0',
                     textAlign: 'center'
                 }}>
                     <Typography variant="caption" sx={{ color: '#595959' }}>
