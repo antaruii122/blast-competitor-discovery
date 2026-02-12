@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import {
     Box,
     Paper,
@@ -8,7 +10,6 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Grid,
     Chip,
     Alert
 } from '@mui/material';
@@ -64,6 +65,7 @@ export default function ColumnMapping({
                 onMappingChange(autoMapping);
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [headers]);
 
     const requiredFieldsFilled = REQUIRED_FIELDS
@@ -92,31 +94,29 @@ export default function ColumnMapping({
                 </Alert>
             )}
 
-            <Grid container spacing={2}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
                 {REQUIRED_FIELDS.map((field) => (
-                    <Grid item xs={12} md={6} key={field.key}>
-                        <FormControl fullWidth>
-                            <InputLabel>
-                                {field.label} {field.required && '*'}
-                            </InputLabel>
-                            <Select
-                                value={mapping[field.key] || ''}
-                                label={`${field.label} ${field.required ? '*' : ''}`}
-                                onChange={(e) => handleMappingChange(field.key, e.target.value)}
-                            >
-                                <MenuItem value="">
-                                    <em>-- Select Column --</em>
+                    <FormControl fullWidth key={field.key}>
+                        <InputLabel>
+                            {field.label} {field.required && '*'}
+                        </InputLabel>
+                        <Select
+                            value={mapping[field.key] || ''}
+                            label={`${field.label} ${field.required ? '*' : ''}`}
+                            onChange={(e) => handleMappingChange(field.key, e.target.value)}
+                        >
+                            <MenuItem value="">
+                                <em>-- Select Column --</em>
+                            </MenuItem>
+                            {headers.map((header, index) => (
+                                <MenuItem key={index} value={header}>
+                                    {header}
                                 </MenuItem>
-                                {headers.map((header, index) => (
-                                    <MenuItem key={index} value={header}>
-                                        {header}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
+                            ))}
+                        </Select>
+                    </FormControl>
                 ))}
-            </Grid>
+            </Box>
 
             {unmappedHeaders.length > 0 && (
                 <Box sx={{ mt: 3 }}>

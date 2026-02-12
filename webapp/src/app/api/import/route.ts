@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, unlink } from 'fs/promises';
 import path from 'path';
 import { executePythonScript, getBatchProcessorPath } from '@/lib/pythonBridge';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const maxDuration = 300; // 5 minutes max for long-running imports
 
 interface ImportRequest {
     data: any[][];
@@ -14,6 +15,8 @@ interface ImportRequest {
 }
 
 export async function POST(request: NextRequest) {
+    let csvPath: string | null = null;
+
     try {
         const body: ImportRequest = await request.json();
         const { data, columnMapping, spreadsheetId, sheetTitle } = body;
@@ -48,7 +51,7 @@ export async function POST(request: NextRequest) {
         await mkdir(tmpDir, { recursive: true });
 
         const timestamp = Date.now();
-        const csvPath = path.join(tmpDir, `import_${timestamp}.csv`);
+        csvPath = path.join(tmpDir, `import_${timestamp}.csv`);
 
         await writeFile(csvPath, csvData, 'utf-8');
         console.log('[API] Created temporary CSV:', csvPath);
@@ -58,6 +61,16 @@ export async function POST(request: NextRequest) {
         console.log('[API] Executing batch processor:', batchProcessorPath);
 
         const result = await executePythonScript(batchProcessorPath, [csvPath]);
+
+        // Clean up temporary file
+        if (csvPath) {
+            try {
+                await unlink(csvPath);
+                console.log('[API] Cleaned up temporary CSV');
+            } catch (cleanupError) {
+                console.warn('[API] Failed to cleanup temp file:', cleanupError);
+            }
+        }
 
         if (!result.success) {
             console.error('[API] Python script failed:', result.error);
@@ -72,7 +85,6 @@ export async function POST(request: NextRequest) {
         }
 
         // Parse results from Python script output
-        // The batch_processor.py should output JSON results
         console.log('[API] Batch processing complete');
 
         return NextResponse.json({
@@ -84,6 +96,16 @@ export async function POST(request: NextRequest) {
 
     } catch (error: any) {
         console.error('[API] Import error:', error);
+
+        // Clean up temporary file on error
+        if (csvPath) {
+            try {
+                await unlink(csvPath);
+            } catch (cleanupError) {
+                console.warn('[API] Failed to cleanup temp file on error:', cleanupError);
+            }
+        }
+
         return NextResponse.json(
             { error: error.message || 'Internal server error' },
             { status: 500 }
