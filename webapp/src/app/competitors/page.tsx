@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Container, Typography, Box, Alert, Snackbar } from '@mui/material';
 import CompetitorMatchTable, { CompetitorMatch } from '@/components/CompetitorMatchTable';
 import SpecComparisonDialog from '@/components/SpecComparisonDialog';
+import RematchDialog from '@/components/RematchDialog';
 import MatchSummary from '@/components/MatchSummary';
 import { saveCompetitorMatches, loadCompetitorMatches } from '@/lib/supabase/competitorMatches';
 
@@ -11,8 +12,10 @@ export default function CompetitorsPage() {
     const [matches, setMatches] = useState<CompetitorMatch[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [compareMatch, setCompareMatch] = useState<CompetitorMatch | null>(null);
+    const [rematchMatch, setRematchMatch] = useState<CompetitorMatch | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isApproving, setIsApproving] = useState(false);
+    const [isRematching, setIsRematching] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -52,7 +55,6 @@ export default function CompetitorsPage() {
         if (result.success) {
             setSuccessMessage(`Successfully saved ${result.savedCount} competitor matches!`);
             setSelectedIds([]); // Clear selection
-            // Optionally reload to show saved matches
             await loadMatches();
         } else {
             setError(result.error || 'Failed to save matches');
@@ -62,10 +64,50 @@ export default function CompetitorsPage() {
     };
 
     const handleReject = () => {
-        // Remove selected matches from the list (they haven't been saved yet)
         setMatches(matches.filter(m => !selectedIds.includes(m.id)));
         setSelectedIds([]);
         setSuccessMessage(`Rejected ${selectedIds.length} matches`);
+    };
+
+    const handleRematch = async (productId: string, options?: any) => {
+        setIsRematching(true);
+        setError(null);
+
+        try {
+            // Call the rematch API
+            const response = await fetch('/api/rematch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    productId,
+                    productName: rematchMatch?.myProductName || '',
+                    category: 'Unknown', // Would come from product data
+                    specs: {},
+                    options
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                setSuccessMessage(`Found ${result.matches.length} alternative matches!`);
+                // TODO: Update the matches list with new alternatives
+            } else {
+                setError(result.error || 'Re-match failed');
+            }
+        } catch (err: any) {
+            setError(err.message || 'Re-match failed');
+        } finally {
+            setIsRematching(false);
+        }
+    };
+
+    const handleManualOverride = (matchId: string, updates: Partial<CompetitorMatch>) => {
+        setMatches(matches.map(m =>
+            m.id === matchId ? { ...m, ...updates } : m
+        ));
+        setSuccessMessage('Match updated successfully!');
+        setRematchMatch(null);
     };
 
     const selectedMatches = matches.filter(m => selectedIds.includes(m.id));
@@ -118,6 +160,7 @@ export default function CompetitorsPage() {
                         selectedIds={selectedIds}
                         onSelectionChange={setSelectedIds}
                         onCompare={setCompareMatch}
+                        onRematch={setRematchMatch}
                     />
                 </>
             )}
@@ -127,6 +170,16 @@ export default function CompetitorsPage() {
                 open={!!compareMatch}
                 onClose={() => setCompareMatch(null)}
                 match={compareMatch}
+            />
+
+            {/* Re-match Dialog */}
+            <RematchDialog
+                open={!!rematchMatch}
+                onClose={() => setRematchMatch(null)}
+                match={rematchMatch}
+                onRematch={handleRematch}
+                onManualOverride={handleManualOverride}
+                isRematching={isRematching}
             />
 
             {/* Success Snackbar */}

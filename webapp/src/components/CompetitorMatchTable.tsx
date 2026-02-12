@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 export interface CompetitorMatch {
     id: string;
@@ -33,6 +34,7 @@ export interface CompetitorMatch {
 interface CompetitorMatchTableProps {
     matches: CompetitorMatch[];
     onCompare?: (match: CompetitorMatch) => void;
+    onRematch?: (match: CompetitorMatch) => void;
     onSelectionChange?: (selectedIds: string[]) => void;
     selectedIds?: string[];
 }
@@ -40,6 +42,7 @@ interface CompetitorMatchTableProps {
 export default function CompetitorMatchTable({
     matches,
     onCompare,
+    onRematch,
     onSelectionChange,
     selectedIds = []
 }: CompetitorMatchTableProps) {
@@ -214,15 +217,26 @@ export default function CompetitorMatchTable({
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <Tooltip title="Compare Specifications">
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => onCompare?.(match)}
-                                                sx={{ color: '#58a6ff' }}
-                                            >
-                                                <CompareArrowsIcon />
-                                            </IconButton>
-                                        </Tooltip>
+                                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                            <Tooltip title="Compare Specifications">
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => onCompare?.(match)}
+                                                    sx={{ color: '#58a6ff' }}
+                                                >
+                                                    <CompareArrowsIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title="Re-match / Edit">
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={() => onRematch?.(match)}
+                                                    sx={{ color: '#bb8009' }}
+                                                >
+                                                    <RefreshIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             );
