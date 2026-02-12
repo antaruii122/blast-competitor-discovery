@@ -1,5 +1,5 @@
 // Supabase functions for competitor matches
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { CompetitorMatch } from '@/components/CompetitorMatchTable';
 
 export interface CompetitorMatchRow {
@@ -24,8 +24,6 @@ export async function saveCompetitorMatches(matches: CompetitorMatch[]): Promise
     savedCount?: number;
 }> {
     try {
-        const supabase = createClient();
-
         // Transform matches to Supabase format
         const rows: CompetitorMatchRow[] = matches.map(match => ({
             id: match.id,
@@ -81,8 +79,6 @@ export async function loadCompetitorMatches(filters?: {
     error?: string;
 }> {
     try {
-        const supabase = createClient();
-
         let query = supabase
             .from('competitor_matches')
             .select('*')
@@ -141,8 +137,6 @@ export async function deleteCompetitorMatches(matchIds: string[]): Promise<{
     error?: string;
 }> {
     try {
-        const supabase = createClient();
-
         const { error } = await supabase
             .from('competitor_matches')
             .delete()
