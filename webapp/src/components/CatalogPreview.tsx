@@ -15,6 +15,7 @@ interface CatalogPreviewProps {
     data: any[][];
     columnMapping: Record<string, any>;
     maxRows?: number;
+    headerRowIndex?: number;
 }
 
 // Convert column index to Excel-style letter (A, B, C, ... Z, AA, AB, etc.)
@@ -28,7 +29,7 @@ function getColumnLetter(index: number): string {
     return letter;
 }
 
-export default function CatalogPreview({ data, columnMapping, maxRows = 10 }: CatalogPreviewProps) {
+export default function CatalogPreview({ data, columnMapping, maxRows = 10, headerRowIndex = 0 }: CatalogPreviewProps) {
     if (!data || data.length < 2) {
         return (
             <Paper sx={{ p: 3, border: '1px solid #30363d', textAlign: 'center' }}>
@@ -37,9 +38,11 @@ export default function CatalogPreview({ data, columnMapping, maxRows = 10 }: Ca
         );
     }
 
-    const headers = data[0] as string[];
-    const rows = data.slice(1, Math.min(maxRows + 1, data.length));
-    const totalProducts = data.length - 1;
+    // Use the correct header row (user-selected) and data starts from row after header
+    const headers = data[headerRowIndex] as string[];
+    const dataStartRow = headerRowIndex + 1;
+    const rows = data.slice(dataStartRow, Math.min(dataStartRow + maxRows, data.length));
+    const totalProducts = data.length - dataStartRow;
     const hasMore = totalProducts > maxRows;
 
     // Get mapped columns to highlight them

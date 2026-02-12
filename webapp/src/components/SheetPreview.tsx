@@ -1,15 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { Box, Paper, Typography, Chip, IconButton } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Paper, Typography, Chip, IconButton, Tooltip } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import TableRowsIcon from '@mui/icons-material/TableRows';
 
 interface SheetPreviewProps {
     data: any[][];
     title: string;
     maxRows?: number;
     spreadsheetId?: string;
+    onHeaderRowChange?: (headerRowIndex: number) => void;
+    initialHeaderRow?: number;
 }
 
 // Convert column index to letter (0 = A, 1 = B, ..., 26 = AA, etc.)
@@ -23,9 +26,40 @@ function getColumnLetter(index: number): string {
     return letter;
 }
 
-export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId }: SheetPreviewProps) {
+export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId, onHeaderRowChange, initialHeaderRow }: SheetPreviewProps) {
     const [iframeLoading, setIframeLoading] = useState(true);
     const [iframeKey, setIframeKey] = useState(0);
+    const [selectedHeaderRow, setSelectedHeaderRow] = useState<number>(initialHeaderRow ?? -1);
+
+    // Auto-detect header row on initial load
+    useEffect(() => {
+        if (data && data.length > 0 && selectedHeaderRow === -1) {
+            // Find the first row that looks like headers (multiple non-empty short texts)
+            for (let i = 0; i < Math.min(5, data.length); i++) {
+                const row = data[i];
+                const nonEmptyCells = row?.filter(cell => cell !== undefined && cell !== null && String(cell).trim() !== '') || [];
+                if (nonEmptyCells.length >= 2) {
+                    const avgLength = nonEmptyCells.reduce((acc, cell) => acc + String(cell).length, 0) / nonEmptyCells.length;
+                    // Looks like headers: multiple short texts
+                    if (avgLength < 40) {
+                        setSelectedHeaderRow(i);
+                        onHeaderRowChange?.(i);
+                        break;
+                    }
+                }
+            }
+            // If no header detected, default to row 0
+            if (selectedHeaderRow === -1) {
+                setSelectedHeaderRow(0);
+                onHeaderRowChange?.(0);
+            }
+        }
+    }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const handleRowClick = (rowIdx: number) => {
+        setSelectedHeaderRow(rowIdx);
+        onHeaderRowChange?.(rowIdx);
+    };
 
     // If spreadsheetId is provided, show Google Sheets iframe (like ESGAMING project)
     if (spreadsheetId) {
@@ -134,12 +168,38 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                         {title}
                     </Typography>
                 </Box>
-                <Chip
-                    label={`${totalRows} rows × ${totalCols} columns`}
-                    size="small"
-                    sx={{ bgcolor: 'rgba(88, 166, 255, 0.1)', color: '#58a6ff', fontSize: '0.75rem' }}
-                />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {onHeaderRowChange && selectedHeaderRow >= 0 && (
+                        <Chip
+                            icon={<TableRowsIcon sx={{ fontSize: 14 }} />}
+                            label={`Header: Row ${selectedHeaderRow + 1}`}
+                            size="small"
+                            sx={{ bgcolor: 'rgba(35, 134, 54, 0.2)', color: '#238636', fontSize: '0.75rem' }}
+                        />
+                    )}
+                    <Chip
+                        label={`${totalRows} rows × ${totalCols} columns`}
+                        size="small"
+                        sx={{ bgcolor: 'rgba(88, 166, 255, 0.1)', color: '#58a6ff', fontSize: '0.75rem' }}
+                    />
+                </Box>
             </Box>
+
+            {/* Header row selection hint */}
+            {onHeaderRowChange && (
+                <Box sx={{
+                    p: 1,
+                    bgcolor: 'rgba(88, 166, 255, 0.1)',
+                    borderBottom: '1px solid #30363d',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1
+                }}>
+                    <Typography variant="caption" sx={{ color: '#58a6ff' }}>
+                        👆 Click on a row to select it as the <strong>header row</strong> (the row with column names like "Model", "Picture", "Specification")
+                    </Typography>
+                </Box>
+            )}
 
             {/* Excel-style spreadsheet area */}
             <Box
@@ -205,84 +265,107 @@ export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId 
                     </thead>
                     <tbody>
                         {displayRows.map((row, rowIdx) => {
-                            const titleRow = isTitleRow(row, rowIdx);
-                            const headerRow = isHeaderRow(row, rowIdx);
+                            const isSelected = selectedHeaderRow === rowIdx;
+                            const isDataRow = rowIdx > selectedHeaderRow;
 
                             return (
-                                <tr key={`row-${rowIdx}`}>
-                                    {/* Row number */}
-                                    <td
+                                <Tooltip
+                                    key={`row-${rowIdx}`}
+                                    title={onHeaderRowChange ? (isSelected ? "✓ This is the header row" : "Click to set as header row") : ""}
+                                    placement="left"
+                                    arrow
+                                >
+                                    <tr
+                                        onClick={() => onHeaderRowChange && handleRowClick(rowIdx)}
                                         style={{
-                                            position: 'sticky',
-                                            left: 0,
-                                            zIndex: 2,
-                                            backgroundColor: '#f3f3f3',
-                                            borderRight: '1px solid #b0b0b0',
-                                            borderBottom: '1px solid #d0d0d0',
-                                            padding: '4px 2px',
-                                            textAlign: 'center',
-                                            fontWeight: 400,
-                                            color: '#595959',
-                                            fontSize: '11px',
-                                            minWidth: '46px',
-                                            width: '46px',
+                                            cursor: onHeaderRowChange ? 'pointer' : 'default',
+                                            transition: 'background-color 0.15s ease',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (onHeaderRowChange && !isSelected) {
+                                                (e.currentTarget as HTMLTableRowElement).style.backgroundColor = 'rgba(88, 166, 255, 0.1)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            (e.currentTarget as HTMLTableRowElement).style.backgroundColor = '';
                                         }}
                                     >
-                                        {rowIdx + 1}
-                                    </td>
-                                    {/* Data cells */}
-                                    {Array.from({ length: totalCols }).map((_, colIdx) => {
-                                        const cellValue = row?.[colIdx];
-                                        const displayValue = cellValue !== undefined && cellValue !== null
-                                            ? String(cellValue)
-                                            : '';
-                                        const hasNewlines = displayValue.includes('\n');
+                                        {/* Row number */}
+                                        <td
+                                            style={{
+                                                position: 'sticky',
+                                                left: 0,
+                                                zIndex: 2,
+                                                backgroundColor: isSelected ? '#238636' : '#f3f3f3',
+                                                borderRight: '1px solid #b0b0b0',
+                                                borderBottom: '1px solid #d0d0d0',
+                                                padding: '4px 2px',
+                                                textAlign: 'center',
+                                                fontWeight: isSelected ? 700 : 400,
+                                                color: isSelected ? '#ffffff' : '#595959',
+                                                fontSize: '11px',
+                                                minWidth: '46px',
+                                                width: '46px',
+                                            }}
+                                        >
+                                            {rowIdx + 1}
+                                        </td>
+                                        {/* Data cells */}
+                                        {Array.from({ length: totalCols }).map((_, colIdx) => {
+                                            const cellValue = row?.[colIdx];
+                                            const displayValue = cellValue !== undefined && cellValue !== null
+                                                ? String(cellValue)
+                                                : '';
+                                            const hasNewlines = displayValue.includes('\n');
 
-                                        // Styling based on row type
-                                        let bgColor = '#ffffff';
-                                        let fontWeight = 400;
-                                        let fontSize = '12px';
-                                        let textAlign: 'left' | 'center' = 'left';
-                                        let borderColor = '#d0d0d0';
+                                            // Styling based on row selection
+                                            let bgColor = '#ffffff';
+                                            let fontWeight = 400;
+                                            let fontSize = '12px';
+                                            let textAlign: 'left' | 'center' = 'left';
+                                            let borderColor = '#d0d0d0';
+                                            let textColor = '#000000';
 
-                                        if (titleRow && displayValue.length > 0) {
-                                            bgColor = '#fff2cc'; // Yellow for title
-                                            fontWeight = 700;
-                                            fontSize = '16px';
-                                            textAlign = 'center';
-                                        } else if (headerRow) {
-                                            bgColor = '#fef9e7'; // Light yellow for headers
-                                            fontWeight = 700;
-                                            fontSize = '12px';
-                                            textAlign = 'center';
-                                            borderColor = '#217346'; // Green border like Excel
-                                        }
+                                            if (isSelected) {
+                                                // Selected header row - green highlighting
+                                                bgColor = '#d4edda';
+                                                fontWeight = 700;
+                                                fontSize = '12px';
+                                                textAlign = 'center';
+                                                borderColor = '#238636';
+                                                textColor = '#155724';
+                                            } else if (rowIdx < selectedHeaderRow) {
+                                                // Rows before header (title rows) - muted
+                                                bgColor = '#f8f9fa';
+                                                textColor = '#6c757d';
+                                            }
 
-                                        return (
-                                            <td
-                                                key={`cell-${rowIdx}-${colIdx}`}
-                                                style={{
-                                                    backgroundColor: bgColor,
-                                                    borderRight: `1px solid ${borderColor}`,
-                                                    borderBottom: `1px solid ${borderColor}`,
-                                                    padding: '8px 10px',
-                                                    minWidth: colIdx === 2 ? '250px' : '150px',
-                                                    maxWidth: '450px',
-                                                    verticalAlign: 'middle',
-                                                    whiteSpace: hasNewlines ? 'pre-wrap' : 'normal',
-                                                    wordBreak: 'break-word',
-                                                    fontWeight: fontWeight,
-                                                    color: '#000000',
-                                                    fontSize: fontSize,
-                                                    lineHeight: '1.5',
-                                                    textAlign: textAlign,
-                                                }}
-                                            >
-                                                {displayValue}
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
+                                            return (
+                                                <td
+                                                    key={`cell-${rowIdx}-${colIdx}`}
+                                                    style={{
+                                                        backgroundColor: bgColor,
+                                                        borderRight: `1px solid ${borderColor}`,
+                                                        borderBottom: `1px solid ${borderColor}`,
+                                                        padding: '8px 10px',
+                                                        minWidth: colIdx === 2 ? '250px' : '150px',
+                                                        maxWidth: '450px',
+                                                        verticalAlign: 'middle',
+                                                        whiteSpace: hasNewlines ? 'pre-wrap' : 'normal',
+                                                        wordBreak: 'break-word',
+                                                        fontWeight: fontWeight,
+                                                        color: textColor,
+                                                        fontSize: fontSize,
+                                                        lineHeight: '1.5',
+                                                        textAlign: textAlign,
+                                                    }}
+                                                >
+                                                    {displayValue}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                </Tooltip>
                             );
                         })}
                     </tbody>

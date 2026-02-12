@@ -44,6 +44,7 @@ export default function ImportPage() {
         totalProducts: 0,
         message: 'Preparing import...'
     });
+    const [headerRowIndex, setHeaderRowIndex] = useState<number>(0);
 
     const steps = importMode === 'google' ? googleSteps : fileSteps;
 
@@ -62,7 +63,15 @@ export default function ImportPage() {
             setSheets([]);
             setSelectedSheet('');
             setFileName('');
+            setHeaderRowIndex(0);
         }
+    };
+
+    // Header row change handler
+    const handleHeaderRowChange = (rowIndex: number) => {
+        setHeaderRowIndex(rowIndex);
+        // Reset column mapping when header row changes
+        setColumnMapping({});
     };
 
     // File upload handler
@@ -364,6 +373,8 @@ export default function ImportPage() {
                                 data={sheetData}
                                 title={importMode === 'google' ? selectedSheet : fileName}
                                 maxRows={10}
+                                onHeaderRowChange={handleHeaderRowChange}
+                                initialHeaderRow={headerRowIndex}
                             />
 
                             {/* Continue button to go to Map Columns */}
@@ -383,10 +394,10 @@ export default function ImportPage() {
                     )}
 
                     {/* Common: Map Columns */}
-                    {activeStep >= getMappingStep() && sheetData.length > 0 && sheetData[0] && (
+                    {activeStep >= getMappingStep() && sheetData.length > 0 && sheetData[headerRowIndex] && (
                         <Box sx={{ mb: 3 }}>
                             <ColumnMapping
-                                headers={sheetData[0]}
+                                headers={sheetData[headerRowIndex]}
                                 onMappingChange={handleMappingChange}
                                 currentMapping={columnMapping}
                             />
@@ -400,6 +411,7 @@ export default function ImportPage() {
                                 data={sheetData}
                                 columnMapping={columnMapping}
                                 maxRows={20}
+                                headerRowIndex={headerRowIndex}
                             />
                         </Box>
                     )}
