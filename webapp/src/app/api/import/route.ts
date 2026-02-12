@@ -9,9 +9,14 @@ export const maxDuration = 300; // 5 minutes max for long-running imports
 
 interface ImportRequest {
     data: any[][];
-    columnMapping: Record<string, string>;
-    spreadsheetId: string;
+    columnMapping: {
+        model: string;
+        specifications: string[];
+    };
+    spreadsheetId: string | null;
     sheetTitle: string;
+    source: 'google' | 'file';
+    headerRowIndex?: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -19,12 +24,14 @@ export async function POST(request: NextRequest) {
 
     try {
         const body: ImportRequest = await request.json();
-        const { data, columnMapping, spreadsheetId, sheetTitle } = body;
+        const { data, columnMapping, spreadsheetId, sheetTitle, source, headerRowIndex = 0 } = body;
 
         console.log('[API] Starting import:', {
-            rows: data.length - 1,
+            totalRows: data.length,
+            headerRowIndex,
             spreadsheetId,
             sheetTitle,
+            source,
             mapping: columnMapping
         });
 
@@ -36,15 +43,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (!columnMapping.product_name || !columnMapping.category || !columnMapping.specs_json) {
+        // Validate the new simplified mapping format (model + specifications)
+        if (!columnMapping.model || !columnMapping.specifications || columnMapping.specifications.length === 0) {
             return NextResponse.json(
-                { error: 'Missing required column mappings' },
+                { error: 'Missing required column mappings (model and specifications)' },
                 { status: 400 }
             );
         }
 
         // Transform sheet data to CSV format expected by batch_processor.py
-        const csvData = transformDataToCsv(data, columnMapping);
+        const csvData = transformDataToCsv(data, columnMapping, headerRowIndex);
 
         // Create temporary CSV file
         const tmpDir = path.join(process.cwd(), 'tmp');
@@ -114,26 +122,42 @@ export async function POST(request: NextRequest) {
 }
 
 // Transform sheet data into CSV format for batch_processor.py
-function transformDataToCsv(data: any[][], mapping: Record<string, string>): string {
-    const headers = data[0];
-    const rows = data.slice(1);
+function transformDataToCsv(
+    data: any[][],
+    mapping: { model: string; specifications: string[] },
+    headerRowIndex: number
+): string {
+    const headers = data[headerRowIndex];
+    const rows = data.slice(headerRowIndex + 1);
 
-    // Find column indices based on mapping
-    const productNameIdx = headers.indexOf(mapping.product_name);
-    const categoryIdx = headers.indexOf(mapping.category);
-    const brandIdx = mapping.brand ? headers.indexOf(mapping.brand) : -1;
-    const modelIdx = mapping.model ? headers.indexOf(mapping.model) : -1;
-    const specsIdx = headers.indexOf(mapping.specs_json);
+    // Find column indices based on the new simplified mapping
+    const modelIdx = headers.indexOf(mapping.model);
+    const specIndices = mapping.specifications.map(col => headers.indexOf(col)).filter(idx => idx >= 0);
 
-    // Build CSV with expected format: product_name,category,brand,model,specs_json
-    const csvRows = ['product_name,category,brand,model,specs_json'];
+    console.log('[API] Column mapping:', {
+        modelColumn: mapping.model,
+        modelIdx,
+        specColumns: mapping.specifications,
+        specIndices
+    });
+
+    // Build CSV with format: model,specifications_combined
+    // The Python script will use model + specs to search for competitors
+    const csvRows = ['model,specifications'];
 
     for (const row of rows) {
-        const productName = row[productNameIdx] || '';
-        const category = row[categoryIdx] || '';
-        const brand = brandIdx >= 0 ? row[brandIdx] || '' : '';
-        const model = modelIdx >= 0 ? row[modelIdx] || '' : '';
-        const specs = row[specsIdx] || '{}';
+        const model = modelIdx >= 0 ? (row[modelIdx] || '') : '';
+
+        // Combine all specification columns into one text
+        const specsText = specIndices
+            .map(idx => row[idx])
+            .filter(val => val !== undefined && val !== null && String(val).trim())
+            .join(' | ');
+
+        // Skip rows without a model
+        if (!model || String(model).trim() === '') {
+            continue;
+        }
 
         // Escape CSV values
         const escapeCsv = (val: string) => {
@@ -145,13 +169,12 @@ function transformDataToCsv(data: any[][], mapping: Record<string, string>): str
         };
 
         csvRows.push([
-            escapeCsv(productName),
-            escapeCsv(category),
-            escapeCsv(brand),
-            escapeCsv(model),
-            escapeCsv(specs)
+            escapeCsv(String(model)),
+            escapeCsv(specsText)
         ].join(','));
     }
+
+    console.log('[API] Generated CSV with', csvRows.length - 1, 'rows');
 
     return csvRows.join('\n');
 }

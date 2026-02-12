@@ -157,7 +157,7 @@ export default function ImportPage() {
         setShowProgressDialog(true);
         setError(null);
 
-        const totalProducts = sheetData.length - 1;
+        const totalProducts = sheetData.length - headerRowIndex - 1;
 
         setImportProgress({
             status: 'processing',
@@ -180,7 +180,8 @@ export default function ImportPage() {
                     columnMapping,
                     spreadsheetId: importMode === 'google' ? spreadsheetId : null,
                     sheetTitle: importMode === 'google' ? selectedSheet : fileName,
-                    source: importMode
+                    source: importMode,
+                    headerRowIndex
                 })
             });
 
