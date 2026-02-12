@@ -139,6 +139,10 @@ export const readSpreadsheet = async (
             console.log(`[GoogleAPI] Using first sheet: ${targetRange}`);
         }
 
+        if (!targetRange) {
+            throw new Error('Could not determine target range');
+        }
+
         const dataUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(targetRange)}`;
         const data = await makeAuthenticatedRequest(dataUrl);
 
