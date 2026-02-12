@@ -1,4 +1,5 @@
-import { Box, Container, Typography, Grid, Card, CardContent, Button } from '@mui/material';
+import { Box, Container, Typography, Card, CardContent, Button } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import Link from 'next/link';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
@@ -43,7 +44,7 @@ export default function Home() {
 
       <Grid container spacing={4} sx={{ mb: 6 }}>
         {features.map((feature) => (
-          <Grid item xs={12} md={4} key={feature.title}>
+          <Grid size={{ xs: 12, md: 4 }} key={feature.title}>
             <Card
               sx={{
                 height: '100%',
