@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { Box, Paper, Typography, Chip, IconButton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -9,29 +9,30 @@ interface SheetPreviewProps {
     data: any[][];
     title: string;
     maxRows?: number;
-    spreadsheetId?: string; // If provided, show Google Sheets iframe
+    spreadsheetId?: string;
 }
 
 // Convert column index to letter (0 = A, 1 = B, ..., 26 = AA, etc.)
 function getColumnLetter(index: number): string {
     let letter = '';
-    while (index >= 0) {
-        letter = String.fromCharCode((index % 26) + 65) + letter;
-        index = Math.floor(index / 26) - 1;
+    let i = index;
+    while (i >= 0) {
+        letter = String.fromCharCode((i % 26) + 65) + letter;
+        i = Math.floor(i / 26) - 1;
     }
     return letter;
 }
 
-export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId }: SheetPreviewProps) {
+export default function SheetPreview({ data, title, maxRows = 25, spreadsheetId }: SheetPreviewProps) {
     const [iframeLoading, setIframeLoading] = useState(true);
     const [iframeKey, setIframeKey] = useState(0);
-    const containerRef = useRef<HTMLDivElement>(null);
 
-    // If spreadsheetId is provided, show Google Sheets iframe
+    // If spreadsheetId is provided, show Google Sheets iframe (like ESGAMING project)
     if (spreadsheetId) {
         const getPreviewUrl = () => {
             const cacheBuster = `${Date.now()}_${iframeKey}`;
-            return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/edit?embedded=true&rm=minimal&t=${cacheBuster}`;
+            // Use /preview URL for read-only view with full formatting
+            return `https://docs.google.com/spreadsheets/d/${spreadsheetId}/preview?t=${cacheBuster}`;
         };
 
         const handleRefresh = () => {
@@ -40,7 +41,7 @@ export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId 
         };
 
         return (
-            <Paper sx={{ border: '1px solid #30363d', borderRadius: 1, overflow: 'hidden' }}>
+            <Paper sx={{ border: '1px solid #30363d', borderRadius: 2, overflow: 'hidden' }}>
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -59,8 +60,7 @@ export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId 
                         <RefreshIcon sx={{ color: '#58a6ff', fontSize: 18 }} />
                     </IconButton>
                 </Box>
-
-                <Box sx={{ position: 'relative', height: 450 }}>
+                <Box sx={{ position: 'relative', height: 550 }}>
                     {iframeLoading && (
                         <Box sx={{
                             position: 'absolute',
@@ -68,10 +68,10 @@ export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId 
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            bgcolor: '#0d1117',
+                            bgcolor: '#ffffff',
                             zIndex: 10
                         }}>
-                            <Typography sx={{ color: '#8b949e' }}>Loading preview...</Typography>
+                            <Typography sx={{ color: '#666' }}>Loading Google Sheet...</Typography>
                         </Box>
                     )}
                     <iframe
@@ -79,9 +79,8 @@ export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId 
                         src={getPreviewUrl()}
                         width="100%"
                         height="100%"
-                        frameBorder="0"
-                        onLoad={() => setIframeLoading(false)}
                         style={{ border: 'none', display: 'block', background: 'white' }}
+                        onLoad={() => setIframeLoading(false)}
                         title={`Preview - ${title}`}
                     />
                 </Box>
@@ -89,7 +88,7 @@ export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId 
         );
     }
 
-    // Local data preview - styled like Google Sheets
+    // Local data preview - Excel/Google Sheets style table
     if (!data || data.length === 0) {
         return (
             <Paper sx={{ p: 3, border: '1px solid #30363d', textAlign: 'center' }}>
@@ -98,13 +97,13 @@ export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId 
         );
     }
 
-    const displayRows = data.slice(0, maxRows + 1); // +1 for header
+    const displayRows = data.slice(0, maxRows + 1);
     const totalRows = data.length;
     const totalCols = Math.max(...data.map(row => row?.length || 0));
 
     return (
-        <Paper sx={{ border: '1px solid #30363d', borderRadius: 1, overflow: 'hidden' }}>
-            {/* Header bar */}
+        <Paper sx={{ border: '1px solid #30363d', borderRadius: 2, overflow: 'hidden' }}>
+            {/* Header bar - Dark theme */}
             <Box sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -126,142 +125,146 @@ export default function SheetPreview({ data, title, maxRows = 15, spreadsheetId 
                 />
             </Box>
 
-            {/* Spreadsheet-style grid */}
+            {/* Excel-style spreadsheet area */}
             <Box
-                ref={containerRef}
                 sx={{
                     overflow: 'auto',
-                    maxHeight: 450,
-                    bgcolor: '#f8f9fa',
-                    '&::-webkit-scrollbar': { width: 12, height: 12 },
-                    '&::-webkit-scrollbar-track': { bgcolor: '#f1f1f1' },
-                    '&::-webkit-scrollbar-thumb': { bgcolor: '#c1c1c1', borderRadius: 6 },
+                    maxHeight: 550,
+                    bgcolor: '#e0e0e0', // Gray area around the sheet
                 }}
             >
-                <Box sx={{ display: 'inline-block', minWidth: '100%' }}>
-                    {/* Column headers (A, B, C...) */}
-                    <Box sx={{ display: 'flex', position: 'sticky', top: 0, zIndex: 3 }}>
-                        {/* Empty corner cell */}
-                        <Box sx={{
-                            minWidth: 50,
-                            width: 50,
-                            height: 24,
-                            bgcolor: '#f0f0f0',
-                            borderRight: '1px solid #e0e0e0',
-                            borderBottom: '1px solid #c0c0c0',
-                            position: 'sticky',
-                            left: 0,
-                            zIndex: 4,
-                        }} />
-                        {/* Column letter headers */}
-                        {Array.from({ length: totalCols }).map((_, colIdx) => (
-                            <Box
-                                key={`col-${colIdx}`}
-                                sx={{
-                                    minWidth: 100,
-                                    width: 100,
-                                    height: 24,
-                                    bgcolor: '#f0f0f0',
-                                    borderRight: '1px solid #e0e0e0',
-                                    borderBottom: '1px solid #c0c0c0',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '0.75rem',
-                                    fontWeight: 500,
-                                    color: '#444',
-                                    fontFamily: 'Arial, sans-serif',
-                                }}
-                            >
-                                {getColumnLetter(colIdx)}
-                            </Box>
-                        ))}
-                    </Box>
-
-                    {/* Data rows */}
-                    {displayRows.map((row, rowIdx) => (
-                        <Box
-                            key={`row-${rowIdx}`}
-                            sx={{
-                                display: 'flex',
-                                '&:hover .data-cell': {
-                                    bgcolor: rowIdx === 0 ? '#e8f0fe' : '#e8f4fd',
-                                },
-                            }}
-                        >
-                            {/* Row number */}
-                            <Box
-                                sx={{
-                                    minWidth: 50,
-                                    width: 50,
-                                    height: 24,
-                                    bgcolor: '#f0f0f0',
-                                    borderRight: '1px solid #c0c0c0',
-                                    borderBottom: '1px solid #e0e0e0',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '0.75rem',
-                                    fontWeight: 400,
-                                    color: '#444',
-                                    fontFamily: 'Arial, sans-serif',
+                <table
+                    style={{
+                        borderCollapse: 'collapse',
+                        width: '100%',
+                        tableLayout: 'auto',
+                        fontFamily: 'Calibri, Arial, sans-serif',
+                        fontSize: '11px',
+                        backgroundColor: '#ffffff',
+                    }}
+                >
+                    <thead>
+                        {/* Column letter headers (A, B, C...) - Excel gray style */}
+                        <tr>
+                            <th
+                                style={{
                                     position: 'sticky',
+                                    top: 0,
                                     left: 0,
-                                    zIndex: 2,
+                                    zIndex: 4,
+                                    backgroundColor: '#f3f3f3',
+                                    borderRight: '1px solid #c0c0c0',
+                                    borderBottom: '1px solid #c0c0c0',
+                                    padding: '3px 2px',
+                                    minWidth: '46px',
+                                    width: '46px',
+                                    textAlign: 'center',
+                                    fontWeight: 400,
+                                    color: '#595959',
+                                    fontSize: '11px',
                                 }}
-                            >
-                                {rowIdx + 1}
-                            </Box>
-                            {/* Data cells */}
-                            {Array.from({ length: totalCols }).map((_, colIdx) => {
-                                const cellValue = row?.[colIdx];
-                                const isHeader = rowIdx === 0;
+                            />
+                            {Array.from({ length: totalCols }).map((_, colIdx) => (
+                                <th
+                                    key={`col-${colIdx}`}
+                                    style={{
+                                        position: 'sticky',
+                                        top: 0,
+                                        zIndex: 3,
+                                        backgroundColor: '#f3f3f3',
+                                        borderRight: '1px solid #c0c0c0',
+                                        borderBottom: '1px solid #c0c0c0',
+                                        padding: '3px 8px',
+                                        minWidth: '120px',
+                                        textAlign: 'center',
+                                        fontWeight: 400,
+                                        color: '#595959',
+                                        fontSize: '11px',
+                                    }}
+                                >
+                                    {getColumnLetter(colIdx)}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {displayRows.map((row, rowIdx) => {
+                            const isFirstDataRow = rowIdx === 0;
 
-                                return (
-                                    <Box
-                                        key={`cell-${rowIdx}-${colIdx}`}
-                                        className="data-cell"
-                                        sx={{
-                                            minWidth: 100,
-                                            width: 100,
-                                            height: 24,
-                                            bgcolor: isHeader ? '#f0f0f0' : '#ffffff',
-                                            borderRight: '1px solid #e0e0e0',
+                            return (
+                                <tr key={`row-${rowIdx}`}>
+                                    {/* Row number - Excel gray style */}
+                                    <td
+                                        style={{
+                                            position: 'sticky',
+                                            left: 0,
+                                            zIndex: 2,
+                                            backgroundColor: '#f3f3f3',
+                                            borderRight: '1px solid #c0c0c0',
                                             borderBottom: '1px solid #e0e0e0',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            px: 0.75,
-                                            fontSize: '0.8rem',
-                                            fontWeight: isHeader ? 600 : 400,
-                                            color: '#202124',
-                                            fontFamily: 'Arial, sans-serif',
-                                            overflow: 'hidden',
-                                            whiteSpace: 'nowrap',
-                                            textOverflow: 'ellipsis',
-                                            cursor: 'default',
-                                            transition: 'background-color 0.1s',
+                                            padding: '3px 2px',
+                                            textAlign: 'center',
+                                            fontWeight: 400,
+                                            color: '#595959',
+                                            fontSize: '11px',
+                                            minWidth: '46px',
+                                            width: '46px',
                                         }}
-                                        title={cellValue !== undefined && cellValue !== null ? String(cellValue) : ''}
                                     >
-                                        {cellValue !== undefined && cellValue !== null ? String(cellValue) : ''}
-                                    </Box>
-                                );
-                            })}
-                        </Box>
-                    ))}
-                </Box>
+                                        {rowIdx + 1}
+                                    </td>
+                                    {/* Data cells */}
+                                    {Array.from({ length: totalCols }).map((_, colIdx) => {
+                                        const cellValue = row?.[colIdx];
+                                        const displayValue = cellValue !== undefined && cellValue !== null
+                                            ? String(cellValue)
+                                            : '';
+                                        const hasNewlines = displayValue.includes('\n');
+
+                                        // Style first row as header (yellow background like Excel)
+                                        const isHeaderStyle = isFirstDataRow && displayValue.length > 0;
+
+                                        return (
+                                            <td
+                                                key={`cell-${rowIdx}-${colIdx}`}
+                                                style={{
+                                                    backgroundColor: isHeaderStyle ? '#fff2cc' : '#ffffff',
+                                                    borderRight: '1px solid #e0e0e0',
+                                                    borderBottom: '1px solid #e0e0e0',
+                                                    padding: '6px 8px',
+                                                    minWidth: '120px',
+                                                    maxWidth: '400px',
+                                                    verticalAlign: 'middle',
+                                                    whiteSpace: hasNewlines ? 'pre-wrap' : 'normal',
+                                                    wordBreak: 'break-word',
+                                                    fontWeight: isHeaderStyle ? 700 : 400,
+                                                    color: '#000000',
+                                                    fontSize: '11px',
+                                                    lineHeight: '1.4',
+                                                    textAlign: isHeaderStyle ? 'center' : 'left',
+                                                }}
+                                            >
+                                                {displayValue}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </Box>
 
             {/* Footer showing row count */}
             {totalRows > maxRows + 1 && (
                 <Box sx={{
                     p: 1,
-                    bgcolor: '#f0f0f0',
-                    borderTop: '1px solid #e0e0e0',
+                    bgcolor: '#f3f3f3',
+                    borderTop: '1px solid #c0c0c0',
                     textAlign: 'center'
                 }}>
-                    <Typography variant="caption" sx={{ color: '#666' }}>
-                        Showing {Math.min(displayRows.length, maxRows + 1)} of {totalRows} rows
+                    <Typography variant="caption" sx={{ color: '#595959' }}>
+                        Showing {displayRows.length} of {totalRows} rows
                     </Typography>
                 </Box>
             )}
