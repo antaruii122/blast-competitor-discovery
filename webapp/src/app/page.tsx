@@ -64,21 +64,21 @@ export default function Home() {
                 <Typography variant="body2" sx={{ mb: 3, color: '#8b949e' }}>
                   {feature.description}
                 </Typography>
-                <Button
-                  component={Link}
-                  href={feature.href}
-                  variant="outlined"
-                  sx={{
-                    borderColor: '#58a6ff',
-                    color: '#58a6ff',
-                    '&:hover': {
-                      borderColor: '#79c0ff',
-                      bgcolor: 'rgba(88, 166, 255, 0.1)',
-                    },
-                  }}
-                >
-                  Go to {feature.title}
-                </Button>
+                <Link href={feature.href} passHref style={{ textDecoration: 'none' }}>
+                  <Button
+                    variant="outlined"
+                    sx={{
+                      borderColor: '#58a6ff',
+                      color: '#58a6ff',
+                      '&:hover': {
+                        borderColor: '#79c0ff',
+                        bgcolor: 'rgba(88, 166, 255, 0.1)',
+                      },
+                    }}
+                  >
+                    Go to {feature.title}
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </Box>
