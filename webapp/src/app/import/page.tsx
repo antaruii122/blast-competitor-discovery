@@ -365,6 +365,20 @@ export default function ImportPage() {
                                 title={importMode === 'google' ? selectedSheet : fileName}
                                 maxRows={10}
                             />
+
+                            {/* Continue button to go to Map Columns */}
+                            {activeStep === getPreviewStep() && activeStep < getMappingStep() && (
+                                <Box sx={{ textAlign: 'center', mt: 3 }}>
+                                    <Button
+                                        variant="contained"
+                                        size="large"
+                                        onClick={() => setActiveStep(getMappingStep())}
+                                        sx={{ textTransform: 'none' }}
+                                    >
+                                        Continue to Map Columns
+                                    </Button>
+                                </Box>
+                            )}
                         </Box>
                     )}
 
