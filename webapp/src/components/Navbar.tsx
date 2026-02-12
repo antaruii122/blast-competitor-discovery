@@ -23,21 +23,20 @@ export default function Navbar() {
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                     {navItems.map((item) => (
-                        <Button
-                            key={item.href}
-                            component={Link}
-                            href={item.href}
-                            sx={{
-                                color: pathname === item.href ? '#58a6ff' : '#8b949e',
-                                bgcolor: pathname === item.href ? 'rgba(88, 166, 255, 0.1)' : 'transparent',
-                                '&:hover': {
-                                    bgcolor: 'rgba(88, 166, 255, 0.15)',
-                                    color: '#58a6ff',
-                                },
-                            }}
-                        >
-                            {item.label}
-                        </Button>
+                        <Link key={item.href} href={item.href} passHref style={{ textDecoration: 'none' }}>
+                            <Button
+                                sx={{
+                                    color: pathname === item.href ? '#58a6ff' : '#8b949e',
+                                    bgcolor: pathname === item.href ? 'rgba(88, 166, 255, 0.1)' : 'transparent',
+                                    '&:hover': {
+                                        bgcolor: 'rgba(88, 166, 255, 0.15)',
+                                        color: '#58a6ff',
+                                    },
+                                }}
+                            >
+                                {item.label}
+                            </Button>
+                        </Link>
                     ))}
                 </Box>
             </Toolbar>
