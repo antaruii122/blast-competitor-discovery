@@ -18,6 +18,7 @@ import {
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export interface CompetitorMatch {
     id: string;
@@ -25,6 +26,7 @@ export interface CompetitorMatch {
     myProductName: string;
     competitorBrand: string;
     competitorModel: string;
+    competitorUrl?: string;
     technicalParityScore: number;
     tier: 'A' | 'B' | 'C';
     specDiffs: string[];
@@ -164,7 +166,23 @@ export default function CompetitorMatchTable({
                                     </TableCell>
                                     <TableCell>{match.competitorBrand}</TableCell>
                                     <TableCell sx={{ fontFamily: 'monospace' }}>
-                                        {match.competitorModel}
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            {match.competitorModel}
+                                            {match.competitorUrl && (
+                                                <Tooltip title="View Product Page">
+                                                    <IconButton
+                                                        size="small"
+                                                        component="a"
+                                                        href={match.competitorUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        sx={{ color: '#58a6ff', p: 0.5 }}
+                                                    >
+                                                        <OpenInNewIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )}
+                                        </Box>
                                     </TableCell>
                                     <TableCell>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

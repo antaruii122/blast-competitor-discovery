@@ -7,6 +7,7 @@ export interface CompetitorMatchRow {
     my_product_id: string;
     competitor_brand: string;
     competitor_model: string;
+    competitor_url?: string;
     technical_parity_score: number;
     tier: string;
     spec_diffs: string;
@@ -109,6 +110,7 @@ export async function loadCompetitorMatches(filters?: {
             myProductName: '', // Will need to join with products table
             competitorBrand: row.competitor_brand,
             competitorModel: row.competitor_model,
+            competitorUrl: row.competitor_url,
             technicalParityScore: row.technical_parity_score,
             tier: row.tier as 'A' | 'B' | 'C',
             specDiffs: JSON.parse(row.spec_diffs || '[]'),
