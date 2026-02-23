@@ -28,6 +28,11 @@ interface MonitorComparisonTableProps {
     comparisons: MonitorComparisonRow[];
 }
 
+interface GroupedData {
+    your_sku: string;
+    matches: Record<string, { sku: string; url?: string }>;
+}
+
 export default function MonitorComparisonTable({ comparisons }: MonitorComparisonTableProps) {
     if (comparisons.length === 0) {
         return (
@@ -38,6 +43,22 @@ export default function MonitorComparisonTable({ comparisons }: MonitorCompariso
             </Paper>
         );
     }
+
+    // Grouping logic: Unique brands for columns, unique your_sku for rows
+    const brands = Array.from(new Set(comparisons.map(c => c.competitor_brand))).sort();
+    const groupedMap = new Map<string, GroupedData>();
+
+    comparisons.forEach(comp => {
+        if (!groupedMap.has(comp.your_sku)) {
+            groupedMap.set(comp.your_sku, { your_sku: comp.your_sku, matches: {} });
+        }
+        groupedMap.get(comp.your_sku)!.matches[comp.competitor_brand] = {
+            sku: comp.competitor_sku,
+            url: comp.competitor_url
+        };
+    });
+
+    const groupedRows = Array.from(groupedMap.values());
 
     return (
         <Paper sx={{ border: '1px solid #30363d' }}>
@@ -52,7 +73,7 @@ export default function MonitorComparisonTable({ comparisons }: MonitorCompariso
                     Monitor Comparisons
                 </Typography>
                 <Chip
-                    label={`${comparisons.length} monitors mapped`}
+                    label={`${groupedRows.length} monitors mapped`}
                     sx={{ bgcolor: 'rgba(88, 166, 255, 0.2)', color: '#58a6ff' }}
                 />
             </Box>
@@ -61,58 +82,72 @@ export default function MonitorComparisonTable({ comparisons }: MonitorCompariso
                 <Table stickyHeader size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 200 }}>
+                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 200, position: 'sticky', left: 0, zIndex: 2 }}>
                                 My Product SKU
                             </TableCell>
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 150 }}>
-                                Competitor Brand
-                            </TableCell>
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 200 }}>
-                                Competitor SKU
-                            </TableCell>
-                            <TableCell sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 100 }}>
-                                Link
-                            </TableCell>
+                            {brands.map(brand => (
+                                <TableCell key={brand} sx={{ bgcolor: '#21262d', fontWeight: 600, minWidth: 200 }}>
+                                    {brand}
+                                </TableCell>
+                            ))}
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {comparisons.map((comp) => (
-                            <TableRow
-                                key={comp.id}
-                                sx={{
-                                    '&:nth-of-type(odd)': { bgcolor: 'rgba(255, 255, 255, 0.02)' },
-                                    '&:hover': { bgcolor: 'rgba(88, 166, 255, 0.05)' }
-                                }}
-                            >
-                                <TableCell sx={{ fontWeight: 500 }}>
-                                    {comp.your_sku}
-                                </TableCell>
-                                <TableCell>{comp.competitor_brand}</TableCell>
-                                <TableCell sx={{ fontFamily: 'monospace' }}>
-                                    {comp.competitor_sku}
-                                </TableCell>
-                                <TableCell>
-                                    {comp.competitor_url ? (
-                                        <Tooltip title="View Product Page">
-                                            <IconButton
-                                                size="small"
-                                                component="a"
-                                                href={comp.competitor_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                sx={{ color: '#58a6ff', p: 0.5 }}
-                                            >
-                                                <OpenInNewIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                    ) : (
-                                        <Typography variant="body2" color="text.secondary">
-                                            N/A
-                                        </Typography>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {groupedRows.map((row, index) => {
+                            const rowBg = index % 2 === 0 ? 'transparent' : 'rgba(255, 255, 255, 0.02)';
+                            return (
+                                <TableRow
+                                    key={row.your_sku}
+                                    sx={{
+                                        bgcolor: rowBg,
+                                        '&:hover': { bgcolor: 'rgba(88, 166, 255, 0.05)' }
+                                    }}
+                                >
+                                    <TableCell sx={{
+                                        fontWeight: 500,
+                                        position: 'sticky',
+                                        left: 0,
+                                        bgcolor: rowBg,
+                                        borderRight: '1px solid rgba(255,255,255,0.05)',
+                                        zIndex: 1
+                                    }}>
+                                        {row.your_sku}
+                                    </TableCell>
+                                    {brands.map(brand => {
+                                        const match = row.matches[brand];
+                                        return (
+                                            <TableCell key={brand} sx={{ fontFamily: 'monospace' }}>
+                                                {match ? (
+                                                    <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1 }}>
+                                                        <Typography variant="body2" sx={{ fontFamily: 'monospace', wordBreak: 'break-word', color: '#c9d1d9' }}>
+                                                            {match.sku}
+                                                        </Typography>
+                                                        {match.url && (
+                                                            <Tooltip title="View Product Page">
+                                                                <IconButton
+                                                                    size="small"
+                                                                    component="a"
+                                                                    href={match.url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    sx={{ color: '#58a6ff', p: 0.25, flexShrink: 0 }}
+                                                                >
+                                                                    <OpenInNewIcon sx={{ fontSize: '1rem' }} />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )}
+                                                    </Box>
+                                                ) : (
+                                                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                                                        -
+                                                    </Typography>
+                                                )}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>
