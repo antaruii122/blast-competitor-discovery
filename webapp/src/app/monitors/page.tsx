@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Container, Typography, Alert } from '@mui/material';
+import { Box, Typography, Alert } from '@mui/material';
 import MonitorComparisonTable, { MonitorComparisonRow } from '@/components/MonitorComparisonTable';
 import { loadMonitorComparisons } from '@/lib/supabase/monitors';
 
@@ -31,17 +31,17 @@ export default function MonitorsPage() {
 
     if (isLoading) {
         return (
-            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Box sx={{ mt: 4, mb: 4, mx: 'auto', width: '85%', maxWidth: '1600px' }}>
                 <Typography variant="h4" sx={{ mb: 3, color: '#c9d1d9' }}>
                     Monitor Comparisons
                 </Typography>
                 <Alert severity="info">Loading monitor comparisons...</Alert>
-            </Container>
+            </Box>
         );
     }
 
     return (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Box sx={{ mt: 4, mb: 4, mx: 'auto', width: '85%', maxWidth: '1600px' }}>
             <Typography variant="h4" sx={{ mb: 3, color: '#c9d1d9' }}>
                 Monitor Comparisons
             </Typography>
@@ -55,6 +55,6 @@ export default function MonitorsPage() {
             {!error && (
                 <MonitorComparisonTable comparisons={comparisons} />
             )}
-        </Container>
+        </Box>
     );
 }

@@ -45,7 +45,17 @@ export default function MonitorComparisonTable({ comparisons }: MonitorCompariso
     }
 
     // Grouping logic: Unique brands for columns, unique your_sku for rows
-    const brands = Array.from(new Set(comparisons.map(c => c.competitor_brand))).sort();
+    const brandCounts = new Map<string, number>();
+    comparisons.forEach(comp => {
+        brandCounts.set(comp.competitor_brand, (brandCounts.get(comp.competitor_brand) || 0) + 1);
+    });
+
+    const brands = Array.from(brandCounts.keys()).sort((a, b) => {
+        const countDiff = brandCounts.get(b)! - brandCounts.get(a)!;
+        if (countDiff !== 0) return countDiff;
+        return a.localeCompare(b);
+    });
+
     const groupedMap = new Map<string, GroupedData>();
 
     comparisons.forEach(comp => {
