@@ -41,7 +41,7 @@ export async function saveCompetitorMatches(matches: CompetitorMatch[]): Promise
 
         // Insert into competitor_matches table
         const { data, error } = await supabase
-            .from('competitor_matches')
+            .from('blast_competitor_matches')
             .insert(rows)
             .select();
 
@@ -80,7 +80,7 @@ export async function loadCompetitorMatches(filters?: {
 }> {
     try {
         let query = supabase
-            .from('competitor_matches')
+            .from('blast_competitor_matches')
             .select('*')
             .order('created_at', { ascending: false });
 
@@ -138,7 +138,7 @@ export async function deleteCompetitorMatches(matchIds: string[]): Promise<{
 }> {
     try {
         const { error } = await supabase
-            .from('competitor_matches')
+            .from('blast_competitor_matches')
             .delete()
             .in('id', matchIds);
 

@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
             for (let i = 0; i < productsToInsert.length; i += batchSize) {
                 const chunk = productsToInsert.slice(i, i + batchSize);
                 const { error } = await supabase
-                    .from('products')
+                    .from('blast_products')
                     .upsert(chunk, { onConflict: 'model_name' });
 
                 if (error) {

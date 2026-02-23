@@ -79,7 +79,7 @@ def save_products_to_db(products: list, supabase: 'Client') -> dict:
             }
 
             # Insert into database
-            result = supabase.table('products').upsert(data, on_conflict='model_name').execute()
+            result = supabase.table('blast_products').upsert(data, on_conflict='model_name').execute()
 
             if result.data:
                 product_ids[product['model']] = result.data[0]['id']
