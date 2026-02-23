@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir, unlink } from 'fs/promises';
 import path from 'path';
+import os from 'os';
 import { executePythonScript, getBatchProcessorPath } from '@/lib/pythonBridge';
 
 export const runtime = 'nodejs';
@@ -55,8 +56,8 @@ export async function POST(request: NextRequest) {
         const csvData = transformDataToCsv(data, columnMapping, headerRowIndex);
 
         // Create temporary CSV file
-        const tmpDir = path.join(process.cwd(), 'tmp');
-        await mkdir(tmpDir, { recursive: true });
+        const tmpDir = os.tmpdir();
+        // fs/promises mkdir is not strictly necessary for os.tmpdir() but left out to avoid ENOENT errors if it already exists or if we can't create it. Vercel /tmp already exists.
 
         const timestamp = Date.now();
         csvPath = path.join(tmpDir, `import_${timestamp}.csv`);
