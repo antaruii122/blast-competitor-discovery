@@ -148,6 +148,10 @@ Product Input: "Razer Kraken V3 Gaming Headset"
     - **Iterate Tier 2 Brands:** Search for models matching critical specs.
     - **Validate:** Apply AI analysis framework + `validate_tech_parity` for numeric tolerance.
     - **Goal:** Accumulate ~4 Tier 1 and ~2 Tier 2 Matches.
+    - **🚨 STRICT BRAND & SKU RULES (MANDATORY):** 
+        1. **MAX ONE MATCH PER BRAND:** You may only select ONE competitor model per brand per search. (e.g., if you find 1 Xiaomi, do not add another Xiaomi. You must find Samsung, MSI, AOC, etc. to fill the quota).
+        2. **STRICT SKU VALIDATION:** You must use the exact, real product SKU (e.g., Xiaomi "G24i" or "G27Qi"). Verify the SKU actually exists in reality and is not hallucinated or incorrectly shortened.
+        3. **BRAND DIVERSITY REQUIRED:** While the Priority #1 brand (e.g., Xiaomi) is the most important, you MUST include matches from other Tier 1 and Tier 2 brands to provide a correct, diverse list of real products.
     - **CRITICAL:** DO NOT FILTER BY PRICE. If the only technical match is 2x the price, KEEP IT.
     - **🚨 STOP HERE: Run PRE-WORK VERIFICATION checklist above**
 3.  **Phase B: Local Discovery** (ONLY after verification complete)
