@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Container, Typography, Box, Button, Stepper, Step, StepLabel, Alert, Dialog, DialogTitle, DialogContent, ToggleButton, ToggleButtonGroup, Paper } from '@mui/material';
 import GoogleAuth from '@/components/GoogleAuth';
 import SheetUrlInput from '@/components/SheetUrlInput';
@@ -21,6 +22,7 @@ const googleSteps = ['Connect Google', 'Select Sheet', 'Preview Data', 'Map Colu
 const fileSteps = ['Upload File', 'Preview Data', 'Map Columns', 'Review Catalog', 'Import'];
 
 export default function ImportPage() {
+    const router = useRouter();
     const [importMode, setImportMode] = useState<ImportMode | null>(null);
     const [activeStep, setActiveStep] = useState(0);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -459,7 +461,7 @@ export default function ImportPage() {
                         <Box sx={{ textAlign: 'center', mt: 3 }}>
                             <Button
                                 variant="contained"
-                                onClick={() => setShowProgressDialog(false)}
+                                onClick={() => router.push('/competitors')}
                                 sx={{ textTransform: 'none' }}
                             >
                                 View Results
