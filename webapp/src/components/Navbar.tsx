@@ -11,6 +11,7 @@ export default function Navbar() {
         { label: 'Home', href: '/' },
         { label: 'Import Catalog', href: '/import' },
         { label: 'Competitors', href: '/competitors' },
+        { label: 'Monitors', href: '/monitors' },
         { label: 'Dashboard', href: '/dashboard' },
         { label: 'Price Discovery', href: '/price-discovery' },
     ];

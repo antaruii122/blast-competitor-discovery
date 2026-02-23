@@ -8,7 +8,7 @@ Construir un motor de paridad técnica global que identifique modelos de hardwar
 
 ## Integrations
 - **Supabase (MCP):** Central data hub (`Competitor_Matches`, `Local_Prices`).
-- **RivalSearchMCP:** Global scouting.
+- **Google Serper / search_web tool:** Global scouting and pricing discovery. **Rule: Use Google Serper first. If unable, fallback to `search_web`.** **BANNED: Writing or running background python/terminal scripts to perform web scraping. You MUST use your native/API search tools directly.**
 - **Google Sheets:** Input source.
 
 ## Data Schemas

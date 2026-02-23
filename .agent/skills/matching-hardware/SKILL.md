@@ -160,6 +160,11 @@ Product Input: "Razer Kraken V3 Gaming Headset"
         - If found, calculate `Value Gap`.
 4.  **Output:** 
     - Insert structured result into Supabase `Matches_Mercado`.
+    - Update the original product's `competitor_analysis_status` to 'complete' in the `my_products` table to track progress.
+    - **🚨 DATABASE POPULATION RULES (CRITICAL):**
+        - `competitor_sku`: MUST be the exact Brand and literal Model Name/Number (e.g., "ASUS VA27EHF", "Xiaomi Mi Monitor 1C", "Gigabyte G27F"). **NEVER** use long generic search descriptions or SEO titles. The name of the monitor IS the competitor SKU.
+        - `competitor_url`: MUST be the actual, direct product URL (e.g., `https://www.asus.com/.../va27ehf/`), **NOT** a search engine URL, and **NOT** just the brand's homepage.
+        - `competitor_specs`: Condense the critical specs used for matching (e.g., "27 inch IPS FHD 100Hz Tier 1"). You may add extra relevant specs if it helps describe the match better.
 
 ## Competitor Analysis Framework
 
@@ -254,7 +259,7 @@ also excessive beyond tolerance guidelines.
 - **Strict Parsing:** Do not guess specs. If a critical spec (e.g., Panel Type) is missing, fail the match or ask for clarification (if interactive).
 - **AI Analysis First:** Use the analysis framework above to evaluate similarity BEFORE running numeric validation.
 - **Context Over Rules:** Guidelines in `category_rules.json` are just that - guidelines. Use engineering judgment.
-- **RivalSearchMCP:** Use this tool (simulated or real) to fetch competitor data.
+- **🚨 SEARCH TOOL DIRECTIVE (CRITICAL):** You are **STRICTLY FORBIDDEN** from using the terminal to run background Python or Bash scripts (like `search_duck.py` or custom scrapers) for web searching. You MUST use the **Google Serper** tool first. If that is unavailable or fails, fallback to the native `search_web` tool directly within the chat.
 - **Supabase:** Ensure the `matches_mercado` table exists before pushing.
 
 ## Resources
