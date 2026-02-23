@@ -1,0 +1,167 @@
+# Motherboards Competitive Matching Guide
+
+> **CRITICAL INSTRUCTION:** Before assessing this product, you MUST check `parity_rules.md` to define the strict Dealbreakers (Critical vs Variable specs). The points and rules below are for **qualitative context** only. Do NOT use them to define what is strict vs variable.
+
+## 1. Qualitative Context & "Product Soul"
+
+### CPU Socket (15 points)
+**Definition:** The CPU socket type (AM5, LGA1700, etc.).
+
+**Why Critical:** Socket defines CPU compatibility. AM5 ≠ LGA1700 = completely incompatible.
+
+**Rejection Rule:** Must match EXACTLY → **AUTO-REJECT** if different
+
+---
+
+### Chipset (15 points)
+**Definition:** The chipset (X670, B650, Z790, B760, etc.).
+
+**Why Critical:** Chipset defines features (PCIe lanes, OC support, USB ports).
+- X670 (enthusiast) ≠ B650 (mainstream) = different feature sets
+- Z790 (Intel OC) ≠ B760 (Intel non-OC) = different target users
+
+**Rejection Rule:**
+- Must match chipset tier (X ↔ X, B ↔ B)
+- X670 vs X670E = acceptable (E is enhanced)
+- X670 vs B650 = **REJECT** (different tiers)
+
+---
+
+### Form Factor (10 points)
+**Definition:** ATX, Micro-ATX, Mini-ITX.
+
+**Why Critical:** Form factor defines case compatibility.
+
+**Rejection Rule:** Must match EXACTLY (ATX only fits ATX cases, etc.)
+
+---
+
+## 2. Structural Features
+
+### Memory Type & Slots (20 points)
+**Definition:** DDR4 vs DDR5, 2-slot vs 4-slot.
+
+**Why Critical:** DDR4 ≠ DDR5 = incompatible RAM.
+
+**Rejection Rule:**
+- Must match memory type (DDR4 vs DDR5) → **AUTO-REJECT** if different
+- 2-slot vs 4-slot = acceptable if same max capacity
+
+---
+
+### PCIe Slots (10 points)
+**Definition:** PCIe 5.0 vs 4.0, number of x16 slots.
+
+**Logic:** PCIe 5.0 is future-proofing. 4.0 is current standard.
+
+**Tolerance:** 4.0 vs 5.0 acceptable (backward compatible).
+
+---
+
+## 3. Convenience Features
+
+### USB-C / Thunderbolt (10 points)
+**Logic:** Premium feature, not critical.
+
+---
+
+### VRM Quality (10 points)
+**Logic:** Affects overclocking headroom. Enthusiast feature.
+
+---
+
+## 4. Secondary Features
+
+### RGB Headers (5 points)
+**Logic:** Aesthetic, not functional.
+
+---
+
+### M.2 Slots (5 points)
+**Logic:** Most boards have 2-4. Not major differentiator.
+
+---
+
+## 5. Verification Checklist
+
+### Pre-Search
+- [ ] Identify socket (AM5, LGA1700, etc.) **CRITICAL**
+- [ ] Verify chipset (X670, B650, Z790, etc.) **CRITICAL**
+- [ ] Confirm form factor (ATX, mATX, ITX) **CRITICAL**
+- [ ] Check memory type (DDR4 vs DDR5) **CRITICAL**
+
+### Customer Persona Test
+**Question:** *"Customer wants X670E ATX DDR5. Would they accept B650 ITX DDR4?"*
+
+**Answer:** **NO** - different chipset tier, form factor, AND memory type.
+
+---
+
+## 6. Reasoning Examples
+
+### ✅ GOOD MATCH: ASUS TUF X670E vs MSI MAG X670E
+
+**Target: ASUS TUF X670E-PLUS**
+- Socket: AM5
+- Chipset: X670E
+- Form Factor: ATX
+- Memory: DDR5, 4-slot
+
+**Candidate: MSI MAG X670E TOMAHAWK**
+- Socket: AM5
+- Chipset: X670E
+- Form Factor: ATX
+- Memory: DDR5, 4-slot
+
+**Analysis:**
+- **CRITICAL:** ✅ All match perfectly
+
+**Match Score:** 98/100
+
+**Why It's a Match:** Identical platform compatibility.
+
+---
+
+### ❌ BAD MATCH: X670 ATX DDR5 vs B650 ITX DDR4
+
+**Analysis:**
+- Socket: ✅ Both AM5
+- Chipset: ❌ X670 vs B650 (different tiers)
+- Form Factor: ❌ ATX vs ITX (incompatible cases)
+- Memory: ❌ DDR5 vs DDR4 (incompatible RAM)
+
+**Why It's NOT a Match:** 3 out of 4 critical features mismatch.
+
+---
+
+## 7. Common Mistakes
+
+### ❌ Mistake 1: "Matching different sockets"
+**Fix:** Socket must match. AM5 ≠ LGA1700.
+
+---
+
+### ❌ Mistake 2: "Ignoring chipset tier differences"
+**Fix:** X670 ≠ B650. Match chipset tier.
+
+---
+
+## 8. Market Tier Indicators
+
+### Entry/Budget Tier
+- B650 (AMD), B760 (Intel)
+- Micro-ATX or ATX
+- DDR4 or entry DDR5
+- Budget brands (ASRock, Biostar)
+
+### Mid-Range Tier
+- B650E, X670 (AMD), Z790 (Intel)
+- ATX
+- DDR5
+- Premium brands (ASUS TUF, MSI MAG)
+
+### Premium Tier
+- X670E, X870E (AMD), Z790 (Intel)
+- E-ATX or ATX
+- DDR5, high-speed support
+- Premium brands (ASUS ROG, MSI MEG, Gigabyte Master)

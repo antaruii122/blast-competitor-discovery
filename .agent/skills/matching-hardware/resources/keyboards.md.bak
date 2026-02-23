@@ -1,0 +1,330 @@
+# Gaming Keyboards Competitive Matching Guide
+
+## 1. CRITICAL Features (Dealbreakers) - 40% Weight
+
+### Switch Type (25 points)
+**Definition:** The key switch technology used.
+
+**Values:**
+- `membrane` - Rubber dome switches (budget, mushy feel)
+- `mechanical_linear` - Mechanical linear (Red switches - smooth, no tactile bump)
+- `mechanical_tactile` - Mechanical tactile (Brown switches - bump feedback)
+- `mechanical_clicky` - Mechanical clicky (Blue switches - audible click)
+- `optical_linear` - Optical linear (fast actuation)
+- `optical_tactile` - Optical tactile
+
+**Why Critical:** Membrane vs Mechanical = **COMPLETELY DIFFERENT TYPING EXPERIENCE**. This is THE most important feature for keyboard enthusiasts.
+
+**Rejection Rule:**
+- Membrane ≠ Mechanical → **AUTO-REJECT**
+- Linear ≠ Tactile ≠ Clicky → Usually dealbreaker (user preference)
+- Exception: Within mechanical category, some users accept different switch types
+
+**Key Insight:** Someone buying mechanical keyboard specifically wants mechanical feel. NEVER match membrane to mechanical.
+
+---
+
+### Form Factor / Layout (15 points)
+**Definition:** The physical size and key count of the keyboard.
+
+**Values:**
+- `full_size` - 104+ keys (numpad included)
+- `TKL` - Tenkeyless (no numpad, ~87 keys)
+- `75%` - Compact with F-row (~84 keys)
+- `65%` - No F-row (~68 keys)
+- `60%` - Minimal (~61 keys, no arrows)
+
+**Why Critical:** Form factor defines desk space and portability needs.
+- Full-size accountant ≠ 60% minimalist gamer
+- TKL gamer ≠ Full-size office worker (but some overlap)
+
+**Rejection Rule:**
+- Full-size vs 60% = **very different use cases** - usually reject
+- Full-size vs TKL = acceptable for some users (gaming overlap)
+- 75% vs 65% = acceptable (similar compact tier)
+
+**Tolerance:** Adjacent sizes acceptable (TKL ↔ 75%, 75% ↔ 65%), but extreme differences (Full ↔ 60%) = reject
+
+---
+
+## 2. STRUCTURAL Features (Tolerance Ranges) - 30% Weight
+
+### Connection Type (20 points)
+**Acceptable Range:** Wired ↔ Wireless depends on use case
+
+**Values:**
+- `wired_only` - USB-A or USB-C cable only
+- `wireless_2.4GHz` - Wireless dongle (low latency)
+- `bluetooth` - Bluetooth wireless (mobile/multi-device)
+- `tri-mode` - Wired + 2.4GHz + Bluetooth (maximum versatility)
+
+**Logic:**
+- Competitive gamers prefer wired (zero latency) or 2.4GHz wireless
+- Office/productivity users prefer Bluetooth (multi-device)
+- Casual gamers accept any connection type
+
+**Tolerance:**
+- Wired vs Wireless = different use case, but some crossover
+- 2.4GHz vs Bluetooth = significant (latency difference)
+- Tri-mode is superior to single mode → acceptable upgrade
+
+---
+
+### Hot-Swappable Switches (10 points)
+**Definition:** Ability to replace switches without soldering.
+
+**Values:**
+- `fixed` - Switches soldered, cannot replace
+- `hot_swap` - Switches replaceable (enthusiast feature)
+
+**Logic:** Hot-swap = enthusiast tier signal. Not present = casual/mainstream market.
+
+**Tolerance:** Hot-swap is UPGRADE over fixed. Fixed vs fixed = same tier. Hot-swap vs hot-swap = enthusiast tier match.
+
+---
+
+## 3. CONVENIENCE Features (Non-Critical) - 20% Weight
+
+### RGB Lighting (10 points)
+**Definition:** Backlighting type and customization.
+
+**Values:**
+- `none` - No backlighting (budget/office)
+- `single_color` - Single color LED (white, red, blue)
+- `single_zone_rgb` - RGB but whole keyboard one color
+- `per_key_rgb` - Individual key RGB (premium)
+
+**Logic:** RGB is aesthetic preference. Gamers want it, office users don't need it.
+
+**Tolerance:** More RGB is upgrade. None vs RGB = different aesthetic target but not dealbreaker.
+
+---
+
+### Media Controls (5 points)
+**Definition:** Dedicated media keys or volume roller.
+
+**Values:**
+- `none` - Fn+key combos only
+- `fn_layer` - Fn layer with media functions
+- `dedicated` - Physical media keys or volume wheel
+
+**Logic:** Convenience feature, not tier-defining. Premium keyboards often have it.
+
+---
+
+### Wrist Rest (5 points)
+**Definition:** Detachable or integrated wrist rest.
+
+**Logic:** Nice-to-have comfort feature. Not critical.
+
+---
+
+## 4. SECONDARY Features (Flexible) - 10% Weight
+
+### Polling Rate (5 points)
+**Tolerance:** ±50% acceptable
+
+**Standard:** 1000Hz (1ms polling) for gaming keyboards
+**Enthusiast:** 8000Hz (0.125ms) - overkill for most
+
+**Logic:** 500Hz vs 1000Hz = negligible difference for most users. 8000Hz = marketing spec.
+
+---
+
+### Keycap Material (5 points)
+**Definition:** ABS plastic vs PBT plastic.
+
+**Values:**
+- `ABS` - Standard plastic (shiny over time)
+- `PBT` - Premium plastic (durable, textured)
+
+**Logic:** PBT is quality signal but not dealbreaker. Most users don't notice difference initially.
+
+---
+
+## 5. Verification Checklist
+
+### Pre-Search
+- [ ] Identify switch type (membrane vs mechanical, linear/tactile/clicky) **CRITICAL**
+- [ ] Determine form factor (full-size vs TKL vs compact)
+- [ ] Note connection preference (wired vs wireless vs tri-mode)
+- [ ] Check if hot-swappable (enthusiast feature)
+- [ ] Define price tier (budget/<$50, mid/$50-120, premium/>$120)
+
+### During-Search
+- [ ] Find official product page
+- [ ] **Verify switch type:**
+  - Membrane or mechanical?
+  - If mechanical: Linear (Red), Tactile (Brown), or Clicky (Blue)?
+  - Brand: Cherry MX, Gateron, Kailh, Outemu?
+- [ ] **Confirm form factor:**
+  - Count keys or check layout (full/TKL/75%/65%/60%)
+- [ ] **Check connection:**
+  - Wired only, wireless only, or multi-mode?
+  - If wireless: 2.4GHz (dongle) or Bluetooth?
+- [ ] **Read specifications:**
+  - Hot-swappable switches?
+  - RGB lighting (per-key vs single-zone)?
+  - Polling rate
+  - Media controls
+
+### Post-Search Validation
+- [ ] Cross-check switch type from reviews if product page unclear
+- [ ] Verify wireless latency claims (2.4GHz is low latency, Bluetooth is not)
+- [ ] Apply "Customer Persona Test"
+
+### Customer Persona Test
+**Question:** *"If a customer wants Target Keyboard would they consider Candidate Keyboard?"*
+
+**Consider:**
+- Same switch type? (membrane vs mechanical = NO)
+- Similar form factor? (full vs 60% = usually NO)
+- Same connection philosophy? (competitive gamer wants wired/2.4GHz, not Bluetooth)
+- Same tier? (budget vs premium)
+
+---
+
+## 6. Reasoning Examples
+
+### ✅ GOOD MATCH: Redragon K552 vs Royal Kludge RK61
+
+**Target: Redragon K552 (TKL Mechanical)**
+- Switch: Mechanical Outemu Blue (clicky)
+- Form Factor: TKL (87 keys)
+- Connection: Wired USB
+- RGB: Red LED backlight
+- Price: $40
+
+**Candidate: Royal Kludge RK61 (60% Mechanical)**
+- Switch: Mechanical Gateron/RK Brown (tactile)
+- Form Factor: 60% (61 keys)
+- Connection: Tri-mode (wired + 2.4GHz + Bluetooth)
+- RGB: Per-key RGB
+- Price: $50
+
+**Analysis:**
+- **CRITICAL - Switch Type:** ⚠️ Both mechanical, but Blue (clicky) vs Brown (tactile)
+  - This is WITHIN mechanical category - some users flexible
+  - Both budget mechanical keyboards for gamers
+- **CRITICAL - Form Factor:** ⚠️ TKL vs 60% - different sizes
+  - TKL keeps arrow keys, 60% removes them
+  - Some gamers accept compact upgrade, others need arrows
+- **STRUCTURAL - Connection:** ✅ UPGRADE - Tri-mode vs wired only
+- **CONVENIENCE - RGB:** ✅ UPGRADE - Per-key RGB vs red LED
+
+**Match Score:** 75/100
+
+**Why It's CONDITIONAL Match:** Both are budget mechanical gaming keyboards from Tier 2 brands. Switch difference (Blue vs Brown) is preference within mechanical category - not dealbreaker. Form factor difference (TKL vs 60%) is significant - some gamers want arrows, others want compact. This is a "consider with caveats" match.
+
+**Key Insight:** Within mechanical category, switch type differences are less critical than membrane vs mechanical.
+
+---
+
+### ❌ BAD MATCH: Membrane Budget vs Mechanical Premium
+
+**Target: Generic Office Membrane Keyboard**
+- Switch: Rubber dome membrane
+- Form Factor: Full-size
+- Connection: Wired USB
+- RGB: None
+- Price: $15
+
+**Candidate: Corsair K70 RGB**
+- Switch: Cherry MX Red (mechanical linear)
+- Form Factor: Full-size
+- Connection: Wired USB
+- RGB: Per-key RGB
+- Price: $150
+
+**Analysis:**
+- **CRITICAL - Switch Type:** ❌ FAIL - Membrane vs Mechanical = **COMPLETELY DIFFERENT**
+- **PRICE:** ❌ FAIL - $15 vs $150 = 10x price difference!
+- **RGB:** ❌ Target has none (office), candidate has per-key RGB (gaming)
+
+**Why It's NOT a Match:** Membrane vs mechanical is THE dealbreaker. Customer buying $15 office membrane keyboard does NOT want mechanical gaming keyboard at 10x price.
+
+---
+
+### 🤔 EDGE CASE: Full-Size vs TKL (Same Brand, Same Tier)
+
+**Target: Logitech G213 Prodigy (Full-Size)**
+- Switch: Mech-dome (membrane-like)
+- Form Factor: Full-size (105 keys)
+- Connection: Wired
+- RGB: 5-zone RGB
+- Price: $60
+
+**Candidate: Logitech G Pro TKL (TKL)**
+- Switch: GX Blue (mechanical clicky)
+- Form Factor: TKL (87 keys)
+- Connection: Wired
+- RGB: Per-key RGB
+- Price: $130
+
+**Initial Concern:** Full vs TKL + Mech-dome vs Mechanical + $60 vs $130
+
+**Analysis:**
+1. **Switch Type:** Mech-dome (not true mechanical) vs GX Blue (mechanical) = different experience
+2. **Form Factor:** Full vs TKL = acceptable for some gamers
+3. **Price:** 2x price difference = different tier
+4. **Customer Persona:** G213 buyer wants budget gaming aesthetic. G Pro buyer wants competitive TKL performance.
+
+**Final Decision:** ❌ **REJECT**
+
+**Reasoning:** Too many mismatches. Not true mechanical vs mechanical, different price tiers, different target users (casual vs competitive).
+
+---
+
+## 7. Common Mistakes
+
+### ❌ Mistake 1: "Matching membrane to mechanical"
+**Why Wrong:** Typing experience is fundamentally different. Never cross-match.
+
+**Fix:** Verify switch type FIRST. Membrane only matches membrane. Mechanical only matches mechanical.
+
+---
+
+### ❌ Mistake 2: "Assuming RGB = gaming keyboard"
+**Why Wrong:** Some office keyboards have RGB. Some premium gaming keyboards skip RGB.
+
+**Fix:** Check switch type and form factor to determine target market.
+
+---
+
+### ❌ Mistake 3: "Treating full-size vs60% as acceptable"
+**Why Wrong:** Numpad + function row vs minimal 60% = very different use cases.
+
+**Fix:** Accept adjacent form factors only (full ↔ TKL, 75% ↔ 65%).
+
+---
+
+## 8. Market Tier Indicators
+
+### Budget Tier (<$50)
+- Membrane OR budget mechanical (Outemu, Gateron Yellow)
+- Wired only
+- Single-zone RGB or single-color LED
+- Tier 2 brands (Redragon, Royal Kludge)
+- ABS keycaps
+- No hot-swap
+- Basic media controls (Fn layer)
+
+### Mid-Range ($50-120)
+- Mechanical switches (Gateron, Kailh, Cherry MX clones)
+- Wireless options (2.4GHz or tri-mode)
+- Per-key RGB
+- Tier 1/2 brands (Corsair, Logitech G, Razer, Keychron)
+- PBT keycaps (some models)
+- Hot-swap (enthusiast models)
+- Dedicated media keys
+
+### Premium (>$120)
+- Cherry MX switches or custom switches
+- Tri-mode connectivity
+- Per-key RGB with advanced software
+- Tier 1 brands (Corsair, Logitech G, Razer, Ducky, Wooting)
+- PBT double-shot keycaps
+- Hot-swap standard
+- Aluminum frame
+- Programmable macros
+- Premium feet/tilt options

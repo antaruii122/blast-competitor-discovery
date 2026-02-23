@@ -20,7 +20,9 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import CloseIcon from '@mui/icons-material/Close';
+import BlockIcon from '@mui/icons-material/Block';
 import { CompetitorMatch } from './CompetitorMatchTable';
+import { getSpecParityStatus } from '../lib/parityRules';
 
 interface SpecComparisonDialogProps {
     open: boolean;
@@ -31,17 +33,26 @@ interface SpecComparisonDialogProps {
 export default function SpecComparisonDialog({ open, onClose, match }: SpecComparisonDialogProps) {
     if (!match) return null;
 
+    const category = match.matchMeta?.category || undefined;
+
     // Parse spec diffs (assuming format: "CPU: Core i5 vs Core i7")
     const parsedDiffs = match.specDiffs.map(diff => {
         const parts = diff.split(':');
         const spec = parts[0]?.trim() || '';
         const values = parts[1]?.split('vs').map(v => v.trim()) || [];
+        const isDifferent = values[0] !== values[1];
+
+        let parityStatus = 'unknown';
+        if (isDifferent) {
+            parityStatus = getSpecParityStatus(category, spec);
+        }
 
         return {
             specification: spec,
             myValue: values[0] || '-',
             competitorValue: values[1] || '-',
-            isDifferent: values[0] !== values[1]
+            isDifferent,
+            parityStatus
         };
     });
 
@@ -144,8 +155,10 @@ export default function SpecComparisonDialog({ open, onClose, match }: SpecCompa
                                 <TableRow
                                     key={index}
                                     sx={{
-                                        '&:nth-of-type(odd)': { bgcolor: 'rgba(255, 255, 255, 0.02)' },
-                                        bgcolor: diff.isDifferent ? 'rgba(187, 128, 9, 0.05)' : 'transparent'
+                                        '&:nth-of-type(odd)': { bgcolor: diff.isDifferent ? undefined : 'rgba(255, 255, 255, 0.02)' },
+                                        bgcolor: !diff.isDifferent ? 'transparent'
+                                            : diff.parityStatus === 'critical' ? 'rgba(248, 81, 73, 0.08)'
+                                                : 'rgba(187, 128, 9, 0.05)'
                                     }}
                                 >
                                     <TableCell sx={{ fontWeight: 600 }}>
@@ -158,10 +171,22 @@ export default function SpecComparisonDialog({ open, onClose, match }: SpecCompa
                                         {diff.competitorValue}
                                     </TableCell>
                                     <TableCell>
-                                        {diff.isDifferent ? (
-                                            <WarningIcon sx={{ color: '#bb8009', fontSize: 20 }} />
-                                        ) : (
+                                        {!diff.isDifferent ? (
                                             <CheckCircleIcon sx={{ color: '#238636', fontSize: 20 }} />
+                                        ) : diff.parityStatus === 'critical' ? (
+                                            <Chip
+                                                icon={<BlockIcon style={{ color: '#f85149' }} />}
+                                                label="CRITICAL"
+                                                size="small"
+                                                sx={{ bgcolor: 'rgba(248, 81, 73, 0.1)', color: '#f85149', fontWeight: 600, fontSize: '0.7em', height: 24 }}
+                                            />
+                                        ) : (
+                                            <Chip
+                                                icon={<WarningIcon style={{ color: '#bb8009' }} />}
+                                                label="VARIABLE"
+                                                size="small"
+                                                sx={{ bgcolor: 'rgba(187, 128, 9, 0.1)', color: '#bb8009', fontWeight: 600, fontSize: '0.7em', height: 24 }}
+                                            />
                                         )}
                                     </TableCell>
                                 </TableRow>

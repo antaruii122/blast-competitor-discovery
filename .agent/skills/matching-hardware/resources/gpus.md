@@ -1,0 +1,204 @@
+# GPUs Competitive Matching Guide
+
+> **CRITICAL INSTRUCTION:** Before assessing this product, you MUST check `parity_rules.md` to define the strict Dealbreakers (Critical vs Variable specs). The points and rules below are for **qualitative context** only. Do NOT use them to define what is strict vs variable.
+
+## 1. Qualitative Context & "Product Soul"
+
+### Chipset / GPU Model (25 points)
+**Definition:** The actual GPU chip (Nvidia RTX 4060, AMD RX 7600, etc.).
+
+**Why Critical:** Chipset defines performance tier. RTX 4060 ≠ RTX 4070 = completely different performance/price.
+
+**Rejection Rule:**
+- Must match chipset EXACTLY → **AUTO-REJECT** if different
+- RTX 4060 vs RTX 4060 Ti = acceptable (same family, Ti is minor upgrade)
+- RTX 4060 vs RTX 4070 = **REJECT** (different tier)
+
+**Key Insight:** GPUs are commodities - chipset IS the product. Everything else (cooler, brand) is secondary.
+
+---
+
+### VRAM Capacity (15 points)
+**Definition:** Video memory size (8GB, 12GB, 16GB, etc.).
+
+**Why Critical:** VRAM capacity defines workload capability.
+- 8GB RTX 4060 vs 12GB RTX 4060 = different models (if exists)
+- 8GB GPU vs 16GB GPU = different use cases (gaming vs AI/rendering)
+
+**Rejection Rule:**
+**Rejection Rule:**
+- Must match VRAM size exactly → **AUTO-REJECT** if different.
+- **Example:** RTX 4070 12GB vs RX 7900 GRE 16GB.
+    - These are **NOT** perfect peers if the user specifically needs VRAM for 4K/AI.
+    - However, if they are the *closest* price/performance competitors, you MUST note the VRAM deficit as a critical differentiation.
+    - **Strict Parity:** 4060 Ti 8GB vs 4060 Ti 16GB = **DIFFERENT PRODUCTS**. Do not mix them.
+
+---
+
+## 2. Structural Features
+
+### Power Connector Type (15 points)
+**Definition:** The power connector required by the GPU.
+
+**Values:**
+- `6-pin` - Legacy low-power GPUs (<75W)
+- `8-pin` - Single 8-pin (150W GPUs)
+- `dual_8-pin` - Two 8-pin connectors (300W GPUs)
+- `12VHPWR` - 12VHPWR/16-pin (RTX 40-series, up to 600W)
+
+**Why Structural (not Secondary):** Power connector affects PSU compatibility.
+- RTX 40-series cards use 12VHPWR connector
+- Older PSUs need adapter cable (included with GPU but adds cable clutter)
+- 12VHPWR cables are thick and require cable management space
+- Some SFF cases cannot route 12VHPWR cables
+
+**Rejection Rule:**
+- 8-pin vs 12VHPWR = acceptable (adapter exists) but NOTE the difference
+- If target is SFF build → 12VHPWR may be case compatibility issue
+
+**Compatibility Impact:**
+- 12VHPWR requires ATX 3.0 PSU OR adapter
+- Adapter adds ~30mm length to cable routing
+
+---
+
+### Cooling Solution Tier (10 points)
+**Acceptable Range:** Within same class
+
+**Tiers:**
+- `single_fan` - Budget ITX cards
+- `dual_fan` - Standard AIB cards
+- `triple_fan` - Premium AIB cards
+- `liquid_cooled` - AIO or custom loop
+
+**Logic:** Single fan vs triple fan = different thermal performance, but same chipset.
+
+**Tolerance:** ±1 fan acceptable (dual ↔ triple). Single fan vs triple fan = note thermal difference.
+
+---
+
+### Boost Clock (5 points)
+**Tolerance:** ±5% acceptable (factory overclock variance)
+
+**Logic:** Most AIB cards boost within 5% of each other. Not a major differentiator.
+
+---
+
+## 3. Convenience Features
+
+### Display Outputs (10 points)
+**Definition:** HDMI/DisplayPort count and versions.
+
+**Logic:** Most modern cards have 3× DP + 1× HDMI. Variance is minimal.
+
+---
+
+### RGB Lighting (10 points)
+**Logic:** Aesthetic preference, not performance.
+
+---
+
+## 4. Secondary Features
+
+### Physical Dimensions (5 points)
+**Tolerance:** ±30mm acceptable
+
+**Logic:** ITX builds need short cards. ATX builds don't care.
+
+---
+
+
+## 5. Verification Checklist
+
+### Pre-Search
+- [ ] Identify chipset (RTX 4060, RX 7600, etc.) **CRITICAL**
+- [ ] Verify VRAM (8GB, 12GB, 16GB) **CRITICAL**
+- [ ] Note cooling tier (single/dual/triple fan)
+
+### During Search
+- [ ] **Confirm chipset exactly** - RTX 4060 vs RTX 4060 Ti vs RTX 4070
+- [ ] **Verify VRAM** from official specs
+- [ ] Check cooling solution (number of fans)
+- [ ] Read boost clock speed
+
+### Customer Persona Test
+**Question:** *"Customer wants RTX 4060 8GB. Would they accept different model?"*
+
+**Answer:** Only if SAME chipset + SAME VRAM. Brand/cooler is preference.
+
+---
+
+## 6. Reasoning Examples
+
+### ✅ GOOD MATCH: MSI RTX 4060 Gaming X vs ASUS Dual RTX 4060
+
+**Target: MSI RTX 4060 Gaming X**
+- Chipset: RTX 4060
+- VRAM: 8GB GDDR6
+- Cooling: Triple fan
+- Boost: 2535 MHz
+
+**Candidate: ASUS Dual RTX 4060**
+- Chipset: RTX 4060
+- VRAM: 8GB GDDR6
+- Cooling: Dual fan
+- Boost: 2490 MHz
+
+**Analysis:**
+- **CRITICAL:** ✅ Same chipset (RTX 4060)
+- **CRITICAL:** ✅ Same VRAM (8GB)
+- **STRUCTURAL:** ⚠️ Triple vs dual fan (cooling difference)
+- **STRUCTURAL:** ✅ Boost within 2% (negligible)
+
+**Match Score:** 92/100
+
+**Why It's a Match:** Same GPU performance (chipset + VRAM). Cooling difference is preference.
+
+---
+
+### ❌ BAD MATCH: RTX 4060 vs RTX 4070
+
+**Target: Any RTX 4060 8GB**
+
+**Candidate: Any RTX 4070 12GB**
+
+**Analysis:**
+- **CRITICAL:** ❌ Different chipset (4060 vs 4070 = 30% performance gap)
+- **CRITICAL:** ❌ Different VRAM (8GB vs 12GB)
+- **PRICE:** ❌ $300 vs $550
+
+**Why It's NOT a Match:** Different performance tier entirely.
+
+---
+
+## 7. Common Mistakes
+
+### ❌ Mistake 1: "Matching different chipsets"
+**Fix:** Chipset must match exactly. RTX 4060 ≠ RTX 4070.
+
+---
+
+### ❌ Mistake 2: "Ignoring VRAM capacity"
+**Fix:** 8GB vs 12GB vs 16GB = different use cases.
+
+---
+
+## 8. Market Tier Indicators
+
+### Entry/Budget Tier
+- RTX 4060, RX 7600
+- 8GB VRAM
+- Dual fan
+- Budget brands (Zotac, PNY, Palit)
+
+### Mid-Range Tier
+- RTX 4060 Ti, RTX 4070, RX 7700 XT
+- 10-12GB VRAM
+- Triple fan
+- Premium brands (MSI, ASUS, Gigabyte)
+
+### Premium Tier
+- RTX 4070 Ti, RTX 4080, RX 7900 XT/XTX
+- 16-24GB VRAM
+- Triple fan + advanced cooling
+- Premium brands (ASUS ROG Strix, MSI Suprim)

@@ -1,0 +1,307 @@
+# Gaming Monitors Competitive Matching Guide
+
+> **CRITICAL INSTRUCTION:** Before assessing this product, you MUST check `parity_rules.md` to define the strict Dealbreakers (Critical vs Variable specs). The points and rules below are for **qualitative context** only. Do NOT use them to define what is strict vs variable.
+
+## 1. Qualitative Context & "Product Soul"
+
+### Aspect Ratio (12 points)
+**Definition:** The width-to-height ratio of the screen.
+
+**Values:**
+- `16:9` - Standard widescreen (1920×1080, 2560×1440, 3840×2160)
+- `21:9` - Ultrawide (3440×1440, 3840×1600)
+- `32:9` - Super ultrawide (5120×1440)
+- `16:10` - Productivity (1920×1200, 2560×1600)
+
+**Why Critical:** Aspect ratio defines ENTIRE USE CASE.
+- 16:9 = Universal compatibility (gaming, office, media)
+- 21:9 = Immersive gaming, productivity multi-window
+- 32:9 = Flight/racing sim, trading, replaces dual monitors
+- 16:10 = Productivity (extra vertical space)
+
+**Rejection Rule:**
+- 16:9 ≠ 21:9 ≠ 32:9 → **AUTO-REJECT**
+- Competitive gamers REJECT ultrawide (esports compatibility issues)
+- Ultrawide buyers specifically want immersion
+
+---
+
+### Panel Type (15 points)
+**Definition:** The LCD panel technology used.
+
+**Values:**
+- `TN` - Twisted Nematic (fast response, poor colors/angles)
+- `IPS` - In-Plane Switching (best colors/angles, slower response)
+- `VA` - Vertical Alignment (deep blacks, mediocre response)
+- `OLED` - Organic LED (perfect blacks, expensive)
+- `Mini-LED` - Mini LED backlight (HDR, expensive)
+
+**Why Critical:** Panel type = fundamentally different viewing experience.
+- IPS vs VA vs TN = **NEVER cross-match**
+- Designer needs IPS color accuracy
+- Competitive gamer tolerates TN for speed
+- Media consumer wants VA deep blacks
+
+**Rejection Rule:**
+- IPS ≠ VA ≠ TN ≠ OLED → **AUTO-REJECT**
+- Only exception: IPS ↔ Mini-LED IPS (Mini-LED is upgrade)
+
+---
+
+### Use Case / Market Segment (13 points)
+**Definition:** The primary intended use.
+
+**Values:**
+- `competitive_gaming` - 240Hz+ TN/IPS, esports
+- `general_gaming` - 144-165Hz IPS/VA, casual gaming
+- `creative_work` - Color accuracy (99% sRGB, Adobe RGB), IPS
+- `productivity` - Office work, resolution over refresh
+- `media_consumption` - Movies/streaming, VA deep blacks
+
+**Why Critical:** Competitive gamer needs TN/240Hz. Designer needs IPS/color accuracy. **Different markets.**
+
+**Rejection Rule:**
+- Competitive gaming ≠ Creative work
+- General gaming ↔ Media consumption = some overlap (VA 144Hz can do both)
+
+---
+
+## 2. Structural Features
+
+### Resolution (15 points)
+**Acceptable Range:** STRICT MATCH REQUIRED
+
+**Values:**
+- `1080p` - 1920×1080 (budget/competitive gaming)
+- `1440p` - 2560×1440 (midrange sweet spot)
+- `4K` - 3840×2160 (premium/creative)
+- `ultrawide_1440p` - 3440×1440 (immersive gaming)
+
+**Logic:** 1080p vs 4K = different market tiers.
+- 1080p = budget/esports (high FPS priority)
+- 1440p = balanced gaming
+- 4K = premium/creative
+
+**Rejection Rule:** Must match resolution tier exactly. **No tolerance.**
+
+---
+
+### Refresh Rate Tier (15 points)
+**Acceptable Range:** Within same tier
+
+**Tiers:**
+- `60-75Hz` - Office/productivity
+- `120-165Hz` - General gaming
+- `240Hz+` - Competitive esports
+
+**Logic:** 144Hz vs 165Hz = acceptable (both gaming tier). But 60Hz vs 240Hz = office vs esports.
+
+**Tolerance:** ±15Hz within tier. Crossing tiers = reject.
+
+---
+
+## 3. Convenience Features
+
+### Adaptive Sync (10 points)
+**Definition:** Variable refresh rate technology.
+
+**Values:**
+- `none` - No VRR
+- `FreeSync` - AMD adaptive sync
+- `G-Sync_Compatible` - Nvidia certified FreeSync
+- `G-Sync_Ultimate` - Nvidia hardware module
+
+**Logic:** AMD vs Nvidia user preference, but most modern monitors support both.
+
+**Tolerance:** FreeSync ↔ G-Sync Compatible = acceptable. G-Sync Ultimate is premium upgrade.
+
+---
+
+### Connectivity (10 points)
+**Definition:** Input ports available.
+
+**Values:**
+- `HDMI_only` - HDMI port(s) only
+- `HDMI+DP` - HDMI + DisplayPort
+- `HDMI+DP+USB-C` - Full connectivity (professional/creator)
+
+**Logic:** USB-C presence = professional/creator tier signal.
+
+**Tolerance:** More ports = upgrade. HDMI vs DP not critical (both work).
+
+---
+
+## 4. Secondary Features
+
+### Size (5 points)
+**Tolerance:** ±1 inch acceptable
+
+**Classes:**
+- `22-24"` - Compact/esports
+- `27-28"` - Standard gaming/work
+- `32-34"` - Large/ultrawide
+
+**Logic:** 24" vs 27" = different class. 27" vs 28" = acceptable.
+
+---
+
+### Response Time (3 points)
+**Tolerance:** ±2ms acceptable
+
+**Standard:** 1ms (TN/IPS gaming), 4-5ms (VA)
+
+**Logic:** 1ms vs 4ms = noticeable for competitive, but secondary spec.
+
+---
+
+### HDR Support (2 points)
+**Definition:** HDR tier (HDR400/600/1000).
+
+**Logic:** Nice-to-have, not dealbreaker. HDR400 is minimal (marketing).
+
+---
+
+## 5. Verification Checklist
+
+### Pre-Search
+- [ ] Identify panel type (IPS/VA/TN/OLED) **CRITICAL**
+- [ ] Determine use case (competitive/general gaming/creative/productivity)
+- [ ] Note resolution (1080p/1440p/4K) **STRICT MATCH**
+- [ ] Define refresh rate tier (60-75Hz/120-165Hz/240Hz+)
+- [ ] Check size preference (24"/27"/32"+)
+
+### During Search
+- [ ] Find official product page
+- [ ] **Verify panel type:**
+  - IPS, VA, TN, OLED, Mini-LED?
+  - Check multiple sources (retailers sometimes mislabel)
+- [ ] **Confirm use case:**
+  - Marketing mentions esports/gaming/creative/office?
+  - Color gamut specs (sRGB%, Adobe RGB%) = creative
+  - High refresh + fast response = competitive gaming
+- [ ] **Check resolution:** 1080p/1440p/4K - must match exactly
+- [ ] **Read specifications:**
+  - Refresh rate (Hz)
+  - Response time (ms)
+  - Adaptive sync (FreeSync/G-Sync)
+  - Connectivity (HDMI, DP, USB-C)
+
+### Customer Persona Test
+**Question:** *"If customer wants Target Monitor, would they consider Candidate?"*
+
+**Consider:**
+- Same panel type? (IPS vs VA = NO)
+- Same resolution? (1080p vs 4K = NO)
+- Same use case? (competitive vs creative = NO)
+- Same refresh tier? (60Hz vs 240Hz = NO)
+
+---
+
+## 6. Reasoning Examples
+
+### ✅ GOOD MATCH: ASUS TUF VG27AQ vs LG 27GL850
+
+**Target: ASUS TUF VG27AQ**
+- Panel: IPS
+- Resolution: 1440p
+- Refresh: 165Hz
+- Response: 1ms (MPRT)
+- Use Case: General gaming
+- Adaptive Sync: G-Sync Compatible
+
+**Candidate: LG 27GL850**
+- Panel: IPS (Nano IPS)
+- Resolution: 1440p
+- Refresh: 144Hz
+- Response: 1ms (GtG)
+- Use Case: General gaming
+- Adaptive Sync: G-Sync Compatible
+
+**Analysis:**
+- **CRITICAL - Panel:** ✅ Both IPS
+- **CRITICAL - Use Case:** ✅ Both general gaming
+- **STRUCTURAL - Resolution:** ✅ Both 1440p
+- **STRUCTURAL - Refresh:** ✅ 144Hz vs 165Hz (same tier, 15% diff acceptable)
+- **CONVENIENCE - Adaptive Sync:** ✅ Both G-Sync Compatible
+
+**Match Score:** 98/100
+
+**Why It's a Match:** Perfect competitors. Both 27" 1440p IPS gaming monitors with 144-165Hz and 1ms response. Esports gamers and general gamers would cross-shop these.
+
+---
+
+### ❌ BAD MATCH: IPS Creative vs TN Esports
+
+**Target: BenQ SW270C (Creative)**
+- Panel: IPS
+- Resolution: 1440p
+- Refresh: 60Hz
+- Use Case: Photo/video editing
+- Color: 99% Adobe RGB, factory calibrated
+
+**Candidate: Alienware AW2521H (Esports)**
+- Panel: IPS (Fast IPS)
+- Resolution: 1080p (lower!)
+- Refresh: 360Hz
+- Use Case: Competitive esports
+- Color: Standard sRGB
+
+**Analysis:**
+- **CRITICAL - Use Case:** ❌ Creative work vs Competitive esports = **completely different**
+- **STRUCTURAL - Resolution:** ❌ 1440p vs 1080p = different tier
+- **STRUCTURAL - Refresh:** ❌ 60Hz vs 360Hz = office vs esports
+
+**Why It's NOT a Match:** Designer needs color accuracy and resolution. Competitive gamer needs high refresh and fast response. Different markets.
+
+---
+
+## 7. Common Mistakes
+
+### ❌ Mistake 1: "Matching IPS vs VA because both 144Hz"
+**Why Wrong:** Panel type defines viewing experience. IPS colors ≠ VA deep blacks.
+
+**Fix:** Never cross-match panel types. IPS only matches IPS.
+
+---
+
+### ❌ Mistake 2: "Assuming all gaming monitors compete"
+**Why Wrong:** Competitive 240Hz esports ≠ general 144Hz gaming ≠ creative 60Hz workstation.
+
+**Fix:** Verify use case from marketing and specs.
+
+---
+
+### ❌ Mistake 3: "Treating 1080p vs 1440p as acceptable"
+**Why Wrong:** Resolution is strict. 1080p = budget/esports. 1440p = midrange. 4K = premium.
+
+**Fix:** Resolution must match exactly.
+
+---
+
+## 8. Market Tier Indicators
+
+### Budget (<$200)
+- 1080p resolution
+- 60-75Hz (office) or 144Hz (budget gaming)
+- TN or entry IPS
+- HDMI only
+- FreeSync
+- Budget brands (AOC, ViewSonic)
+
+### Mid-Range ($200-500)
+- 1440p resolution
+- 144-165Hz
+- IPS or VA
+- HDMI + DisplayPort
+- G-Sync Compatible or FreeSync Premium
+- Premium brands (ASUS, LG, MSI, Samsung)
+
+### Premium (>$500)
+- 1440p or 4K
+- 240Hz+ (esports) or 4K 144Hz (premium gaming)
+- IPS (Nano IPS, Fast IPS) or OLED
+- HDMI 2.1 + DP 1.4 + USB-C
+- G-Sync Ultimate or FreeSync Premium Pro
+- HDR600+ or HDR1000
+- Factory calibrated (creative monitors)
+- Premium brands (ASUS ROG, Alienware, LG UltraGear, BenQ SW series)

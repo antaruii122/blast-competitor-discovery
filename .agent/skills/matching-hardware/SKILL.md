@@ -1,6 +1,6 @@
 ---
 name: matching-hardware
-description: Identifies global technical rivals for hardware products and finds their local (South American) pricing. Uses strict 20% numeric tolerance and feature gatekeeping.
+description: Identifies global technical rivals for hardware products. Uses strict technical parity and feature gatekeeping. IGNORES PRICE for matching.
 ---
 
 # Hardware Matching Skill
@@ -9,6 +9,46 @@ description: Identifies global technical rivals for hardware products and finds 
 - When the user wants to find competitors for a specific product (e.g., "Find rivals for this MSI Monitor").
 - When a new product is added to the Google Sheet and needs validation.
 - Triggered by `engine_orchestrator.py`.
+
+## 🚨 UNIVERSAL EXCLUSION RULES (READ THIS FIRST)
+**Applies to ALL categories:**
+
+1.  **Gaming Identity is ABSOLUTE:**
+    - If the input product is a **Gaming Product** (e.g., "Redragon", "Razer", "RGB", "Gaming Headset"), you are **FORBIDDEN** from comparing it effectively with "Lifestyle" or "General Consumer" brands.
+    - **Brand Hierarchy & Allowed List:**
+    
+        **1. Monitors**
+        *   **Tier 1 (Global Leaders):** Samsung, LG, ASUS (ROG/TUF), Dell (Alienware), AOC, Acer (Predator/Nitro), BenQ (Zowie).
+        *   **Tier 2 (Value/Challengers):** Xiaomi, MSI, Gigabyte, ViewSonic, Sceptre, Viotek, Pixio, Innocn, TGT, Mancer, Arzopa, Pichau.
+        *   **BANNED:** KTC (Not in region).
+
+        **2. Peripherals (Keyboards, Mice, Headsets)**
+        *   **Tier 1:** Logitech G, Razer, Corsair, HyperX, SteelSeries, ASUS ROG.
+        *   **Tier 2 (Budget/Regional):** Redragon, T-Dagger, VSG, Gamdias, Sharkoon, Trust, Havit, Glorious, Akko, Keychron, Royal Kludge (RK), Aula, Ajazz, Motospeed.
+
+        **3. Components (GPUs, Motherboards)**
+        *   **Tier 1 (The "Big 3+1"):** ASUS, MSI, Gigabyte, ASRock.
+        *   **Tier 2 (Specialists/Value):** Zotac, PNY, Palit, Galax (KFA2), Colorful, Sapphire (AMD), PowerColor (AMD), XFX (AMD), Biostar, EVGA (Legacy/Used).
+
+        **4. Cooling & Cases**
+        *   **Tier 1:** Corsair, NZXT, Lian Li, Cooler Master, Thermaltake, Fractal Design, Phanteks, Be Quiet!, Noctua (Cooling).
+        *   **Tier 2:** DeepCool, Antec, Aerocool, Cougar, Gamdias, Redragon, Montech, Zalman, ID-Cooling, Valkyrie, Pichau, T-Dagger.
+
+        **5. Power Supplies (PSU)**
+        *   **Tier 1 (Elite/Reliable):** Corsair (RMe/RMx/HXi), Seasonic, EVGA (SuperNOVA), Be Quiet!, ASUS ROG/TUF, MSI (MPG/MEG), Thermaltake (Toughpower), XPG (Core Reactor).
+        *   **Tier 2 (Budget/Acceptable):** DeepCool (PK/PM), Cooler Master (MWE), Gigabyte (UD), Redragon (Gold models only), Gamdias (Kratos/Helios - Low Tier verify), Aerocool (Cylon/Kcas - Low Tier verify).
+        *   **Warning:** Strict quality control on Tier 2 PSUs; verified 80+ Bronze/Gold minimum.
+
+        **6. Gaming Chairs**
+        *   **Tier 1 (Premium):** Secretlab, Herman Miller x Logitech, Razer (Iskur/Enki), DXRacer, Noblechairs, Corsair.
+        *   **Tier 2 (Regional/Value):** Cougar, ThunderX3, Redragon, Gamdias, Aerocool, Drift, Sharkoon, DT3 Sports (Brazil), Pichau (Brazil).
+
+    - **Exception:** Only specific models explicitly marketed as "Gaming Series" from general brands (e.g., Sony INZONE, JBL Quantum) are allowed. Generic models (JBL Tune, Sony WH-1000XM) are **AUTO-REJECTED**.
+
+2.  **Product Soul Alignment:**
+    - Do not match a product optimized for *competitive performance* (latency, mic clarity, positioning) with a product optimized for *media consumption* (anc, portability, battery life).
+
+---
 
 ## Workflow
 
@@ -47,6 +87,59 @@ For EACH candidate product, you MUST verify:
 
 ---
 
+## 🚨 MANDATORY FIRST STEP: Category Detection & MD Routing
+
+**BEFORE starting Phase A (Global Tech Search), you MUST identify the product category and consult its verification guide.**
+
+### Step 1: Detect Product Category
+
+From the product specs or name, identify the category:
+- **case** - PC cases, enclosures, chassis
+- **headset** - Gaming headsets, headphones with mic
+- **keyboard** - Mechanical/membrane keyboards
+- **mouse** - Gaming mice, pointing devices
+- **monitor** - Display panels, screens
+- **gpu** - Graphics cards (Nvidia, AMD)
+- **motherboard** - Mainboards (AM4, AM5, LGA1700, etc.)
+- **cooling** - CPU coolers (air tower, AIO liquid coolers)
+- **gaming_table** - Gaming desks, standing desks
+
+### Step 2: Load Category Verification Guide
+
+**IMMEDIATELY read the category-specific MD file:**
+- Reference path: `resources/{category}.md`
+- Examples:
+  - Headset → Read `resources/headsets.md`
+  - Keyboard → Read `resources/keyboards.md`
+  - Monitor → Read `resources/monitors.md`
+
+### Step 3: Apply Category Rules
+
+Use the verification guide to identify:
+1. **CRITICAL Features (40%)** - Dealbreakers that must match
+2. **STRUCTURAL Features (30%)** - Important with tolerance ranges
+3. **CONVENIENCE Features (20%)** - Nice-to-have
+4. **SECONDARY Features (10%)** - Flexible
+
+**The category MD defines what makes products compete in the same market.**
+
+### Example:
+```
+Product Input: "Razer Kraken V3 Gaming Headset"
+
+1. Detect Category: headset
+2. Read: resources/headsets.md
+3. Extract Critical Features from MD:
+   - Surround sound type (stereo vs 7.1) - DEALBREAKER
+   - Connection type (wired USB vs 3.5mm)
+   - Microphone presence
+4. Use these to filter competitors BEFORE checking prices
+```
+
+**❌ DO NOT SKIP THIS STEP. Skipping category verification is how errors like "matching non-7.1 headset to 7.1 headset" happen.**
+
+---
+
 ### Main Workflow
 1.  **Input Parsing:** Receive standard Product Spec JSON.
 2.  **Phase A: Global Tech Search**
@@ -55,6 +148,7 @@ For EACH candidate product, you MUST verify:
     - **Iterate Tier 2 Brands:** Search for models matching critical specs.
     - **Validate:** Apply AI analysis framework + `validate_tech_parity` for numeric tolerance.
     - **Goal:** Accumulate ~4 Tier 1 and ~2 Tier 2 Matches.
+    - **CRITICAL:** DO NOT FILTER BY PRICE. If the only technical match is 2x the price, KEEP IT.
     - **🚨 STOP HERE: Run PRE-WORK VERIFICATION checklist above**
 3.  **Phase B: Local Discovery** (ONLY after verification complete)
     - For each **VERIFIED Global Match**:
@@ -70,7 +164,7 @@ Before declaring a match, collect:
 - Full product specifications from manufacturer/retailer pages
 - Market positioning (office, gaming, enthusiast, professional)
 - Visual aesthetics and build features (tempered glass, RGB, mesh vs solid panels)
-- Price segment (budget, mid-range, premium)
+- **IGNORE** Price segment. Focus on "Performance Tier" instead.
 - Customer reviews mentioning use case
 
 ### Step 2: Identify Critical Differentiators
@@ -126,8 +220,8 @@ Before declaring ANY product as a match, you MUST verify:
 
 ### Step 3: Make an Engineering Judgment
 Synthesize all information and ask:
-> "If a customer wants Product A, would they realistically consider Product B  
-> as a valid competitor/alternative in the same market?"
+> "If a customer wants Product A, is Product B the **TECHNICAL TWIN**?
+> "Forget price. Does it DO the same things?"
 
 **Provide reasoned analysis:**
 - **Match confidence:** High / Medium / Low

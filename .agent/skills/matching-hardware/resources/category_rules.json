@@ -1,93 +1,154 @@
 {
   "monitor": {
     "brands_tier1": ["MSI", "Gigabyte", "ASUS", "Samsung", "LG"],
-    "brands_tier2": ["LC-Power", "ViewSonic", "Xiaomi"],
+    "brands_tier2": ["LC-Power", "ViewSonic", "Xiaomi", "AOC"],
     "gatekeeping": {
+      "aspect_ratio": true,
       "panel_type": true,
-      "screen_curvature": true,
+      "use_case_market_segment": true,
       "resolution": true
     },
+    "structural_specs": {
+      "screen_curvature": ["flat", "1000R", "1500R", "1800R"],
+      "refresh_rate_tier": ["60-75Hz", "120-165Hz", "240Hz+"]
+    },
     "numeric_specs": ["refresh_rate_hz", "response_time_ms", "size_inch"],
-    "tolerance": 0.20
+    "tolerance": 0.15
   },
   "case": {
-    "brands_tier1": ["MSI", "Cooler Master", "be quiet!", "Corsair", "NZXT"],
-    "brands_tier2": ["Redragon", "Antec", "DeepCool", "Cougar"],
+    "brands_tier1": ["MSI", "Cooler Master", "be quiet!", "Corsair", "NZXT", "Fractal Design", "Lian Li"],
+    "brands_tier2": ["Redragon", "Antec", "DeepCool", "Cougar", "GameMax", "Thermaltake"],
     "gatekeeping": {
+      "tempered_glass_style": true,
+      "front_panel_design": true,
+      "showcase_intent": true,
       "form_factor": true
     },
-    "numeric_specs": ["fan_count_preinstalled"],
-    "tolerance": 0.20
+    "structural_specs": {
+      "gpu_clearance_tier": ["<300mm", "300-360mm", ">360mm"],
+      "radiator_support_tier": ["none", "120-240mm", "280-360mm", "dual_360mm"]
+    },
+    "numeric_specs": ["fan_count_preinstalled", "height_mm", "width_mm", "depth_mm"],
+    "tolerance": 0.35
   },
   "cooling": {
-    "brands_tier1": ["MSI", "Cooler Master", "Corsair", "NZXT", "Be Quiet!", "Arctic"],
-    "brands_tier2": ["DeepCool", "ID-Cooling", "Redragon"],
+    "brands_tier1": ["MSI", "Cooler Master", "Corsair", "NZXT", "Be Quiet!", "Arctic", "Noctua", "EKWB"],
+    "brands_tier2": ["DeepCool", "ID-Cooling", "Redragon", "Thermalright"],
     "gatekeeping": {
-      "type": true,
-      "radiator_size_mm": true
+      "cooling_type": true,
+      "tdp_rating_tier": true
+    },
+    "structural_specs": {
+      "radiator_size": ["120-140mm", "240-280mm", "360-420mm"],
+      "air_cooler_height_mm": ["<120mm", "120-165mm", ">165mm"]
     },
     "numeric_specs": ["fan_rpm_max", "noise_level_db"],
     "tolerance": 0.20
   },
   "keyboard": {
-    "brands_tier1": ["Logitech G", "Razer", "SteelSeries", "Corsair", "HyperX"],
-    "brands_tier2": ["Redragon", "Glorious", "Keychron"],
+    "brands_tier1": ["Logitech G", "Razer", "SteelSeries", "Corsair", "HyperX", "Ducky", "Keychron"],
+    "brands_tier2": ["Redragon", "Glorious", "Royal Kludge", "GMMK"],
     "gatekeeping": {
       "switch_type": true,
-      "connection_type": true,
-      "layout": false
+      "form_factor_layout": true,
+      "hot_swappable": true
+    },
+    "structural_specs": {
+      "connection_type": ["wired_only", "wireless_2.4GHz", "bluetooth", "tri_mode"]
     },
     "numeric_specs": ["polling_rate_hz"],
     "tolerance": 0.20
   },
   "mouse": {
-    "brands_tier1": ["Logitech G", "Razer", "SteelSeries", "Corsair", "Glorious"],
-    "brands_tier2": ["Redragon", "HyperX"],
+    "brands_tier1": ["Logitech G", "Razer", "SteelSeries", "Corsair", "Glorious", "Finalmouse"],
+    "brands_tier2": ["Redragon", "HyperX", "Pulsar", "Vaxee"],
     "gatekeeping": {
-      "sensor_type": false,
-      "connection_type": true
+      "grip_style_optimization": true,
+      "sensor_tier": true,
+      "weight_class": true
     },
-    "numeric_specs": ["dpi_max", "weight_g"],
+    "structural_specs": {
+      "connection_type": ["wired", "wireless_2.4GHz", "bluetooth", "tri_mode"]
+    },
+    "numeric_specs": ["dpi_max", "weight_g", "polling_rate_hz"],
     "tolerance": 0.20
   },
   "headset": {
-    "brands_tier1": ["MSI", "Razer", "Corsair", "HyperX", "SteelSeries", "Logitech G"],
-    "brands_tier2": ["Redragon", "JBL Quantum"],
+    "brands_tier1": ["MSI", "Razer", "Corsair", "HyperX", "SteelSeries", "Logitech G", "Astro", "Beyerdynamic"],
+    "brands_tier2": ["Redragon", "JBL Quantum", "ONIKUMA", "Trust", "Cooler Master"],
     "gatekeeping": {
+      "earcup_design": true,
+      "surround_sound_type": true,
       "connection_type": true,
-      "surround_sound_7.1": true
+      "microphone_presence": true,
+      "battery_system_type": true,
+      "anc_active_noise_cancellation": true
     },
-    "numeric_specs": ["driver_size_mm"],
+    "structural_specs": {
+      "driver_size_tier": ["30-40mm", "40-50mm", "53mm+"],
+      "impedance_tier": ["16-32Ω", "40-80Ω", "100Ω+"]
+    },
+    "numeric_specs": ["driver_size_mm", "frequency_response_low_hz", "frequency_response_high_hz"],
     "tolerance": 0.20
   },
   "gaming_table": {
-    "brands_tier1": ["Cougar", "Eureka Ergonomic", "Secretlab"],
-    "brands_tier2": ["Generic", "Regional Leaders"],
+    "brands_tier1": ["Cougar", "Eureka Ergonomic", "Secretlab", "FlexiSpot", "Autonomous"],
+    "brands_tier2": ["Generic", "Regional Leaders", "AKRacing"],
     "gatekeeping": {
       "motorized_height_adjust": true,
-      "rgb_lighting": false
+      "monitor_arm_compatibility": true,
+      "size_class": true,
+      "cable_management_tier": true
     },
-    "numeric_specs": ["width_cm", "max_load_kg"],
+    "structural_specs": {
+      "weight_capacity_tier": ["<50kg", "50-100kg", ">100kg"],
+      "material_quality": ["particle_board", "MDF", "solid_wood", "steel"]
+    },
+    "numeric_specs": ["width_cm", "depth_cm", "max_load_kg"],
+    "tolerance": 0.20
+  },
+  "gaming_chair": {
+    "brands_tier1": ["Secretlab", "Herman Miller", "Razer", "DXRacer", "Noblechairs", "Corsair"],
+    "brands_tier2": ["Cougar", "ThunderX3", "Redragon", "Gamdias", "Aerocool", "Drift", "Sharkoon", "DT3", "Pichau"],
+    "gatekeeping": {
+      "style_design": true,
+      "size_class": true,
+      "lumbar_support_type": true,
+      "recline_range_tier": true
+    },
+    "structural_specs": {
+      "upholstery_material": ["pu_leather", "fabric", "mesh"],
+      "armrest_type": ["1D", "2D", "3D", "4D"]
+    },
+    "numeric_specs": ["weight_capacity_kg"],
     "tolerance": 0.20
   },
   "gpu": {
-    "brands_tier1": ["MSI", "ASUS", "GIGABYTE", "Zotac", "PNY"],
-    "brands_tier2": ["Palit", "Galax", "Inno3D"],
+    "brands_tier1": ["MSI", "ASUS", "GIGABYTE", "Zotac", "PNY", "EVGA"],
+    "brands_tier2": ["Palit", "Galax", "Inno3D", "Gainward"],
     "gatekeeping": {
       "chipset": true,
       "vram_gb": true
     },
-    "numeric_specs": ["boost_clock_mhz"],
+    "structural_specs": {
+      "power_connector_type": ["6-pin", "8-pin", "dual_8-pin", "12VHPWR"],
+      "cooling_solution_tier": ["single_fan", "dual_fan", "triple_fan", "liquid_cooled"]
+    },
+    "numeric_specs": ["boost_clock_mhz", "length_mm"],
     "tolerance": 0.10
   },
   "motherboard": {
     "brands_tier1": ["MSI", "ASUS", "GIGABYTE", "ASRock"],
-    "brands_tier2": ["Biostar"],
+    "brands_tier2": ["Biostar", "ASUS Prime", "MSI Pro"],
     "gatekeeping": {
-        "socket": true,
-        "chipset": true,
-        "form_factor": true,
-        "memory_type": true
+      "socket": true,
+      "chipset": true,
+      "form_factor": true,
+      "memory_type": true
+    },
+    "structural_specs": {
+      "memory_slots": [2, 4],
+      "pcie_generation": ["4.0", "5.0"]
     },
     "numeric_specs": [],
     "tolerance": 0.0
