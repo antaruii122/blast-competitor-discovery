@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir, unlink } from 'fs/promises';
-import path from 'path';
-import os from 'os';
-import { executePythonScript, getBatchProcessorPath } from '@/lib/pythonBridge';
+import { getServiceSupabase } from '@/lib/supabase/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -21,8 +18,6 @@ interface ImportRequest {
 }
 
 export async function POST(request: NextRequest) {
-    let csvPath: string | null = null;
-
     try {
         const body: ImportRequest = await request.json();
         const { data, columnMapping, spreadsheetId, sheetTitle, source, headerRowIndex = 0 } = body;
@@ -52,130 +47,76 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Transform sheet data to CSV format expected by batch_processor.py
-        const csvData = transformDataToCsv(data, columnMapping, headerRowIndex);
+        const headers = data[headerRowIndex];
+        const rows = data.slice(headerRowIndex + 1);
 
-        // Create temporary CSV file
-        const tmpDir = os.tmpdir();
-        // fs/promises mkdir is not strictly necessary for os.tmpdir() but left out to avoid ENOENT errors if it already exists or if we can't create it. Vercel /tmp already exists.
+        const modelIdx = headers.indexOf(columnMapping.model);
+        const specIndices = columnMapping.specifications.map(col => headers.indexOf(col)).filter(idx => idx >= 0);
 
-        const timestamp = Date.now();
-        csvPath = path.join(tmpDir, `import_${timestamp}.csv`);
-
-        await writeFile(csvPath, csvData, 'utf-8');
-        console.log('[API] Created temporary CSV:', csvPath);
-
-        // Execute Python batch processor
-        const batchProcessorPath = getBatchProcessorPath();
-        console.log('[API] Executing batch processor:', batchProcessorPath);
-
-        const result = await executePythonScript(batchProcessorPath, [csvPath]);
-
-        // Clean up temporary file
-        if (csvPath) {
-            try {
-                await unlink(csvPath);
-                console.log('[API] Cleaned up temporary CSV');
-            } catch (cleanupError) {
-                console.warn('[API] Failed to cleanup temp file:', cleanupError);
-            }
-        }
-
-        if (!result.success) {
-            console.error('[API] Python script failed:', result.error);
+        if (modelIdx === -1) {
             return NextResponse.json(
-                {
-                    error: 'Batch processing failed',
-                    details: result.error,
-                    output: result.output
-                },
-                { status: 500 }
+                { error: 'Model column not found in data headers' },
+                { status: 400 }
             );
         }
 
-        // Parse results from Python script output
-        console.log('[API] Batch processing complete');
+        const supabase = getServiceSupabase();
+
+        let validRowsCount = 0;
+        const productsToInsert = [];
+
+        for (const row of rows) {
+            const model = row[modelIdx] !== undefined && row[modelIdx] !== null ? String(row[modelIdx]).trim() : '';
+
+            // Skip rows without a model
+            if (!model) continue;
+
+            // Combine all specification columns into one text
+            const specsText = specIndices
+                .map(idx => row[idx])
+                .filter(val => val !== undefined && val !== null && String(val).trim())
+                .join(' | ');
+
+            productsToInsert.push({
+                id: crypto.randomUUID(),
+                model_name: model,
+                specifications_text: specsText,
+                created_at: new Date().toISOString(),
+                status: 'pending'
+            });
+            validRowsCount++;
+        }
+
+        console.log(`[API] Processing ${validRowsCount} products to Supabase`);
+
+        if (productsToInsert.length > 0) {
+            // Batch upsert to database to avoid large payload limits
+            const batchSize = 500;
+            for (let i = 0; i < productsToInsert.length; i += batchSize) {
+                const chunk = productsToInsert.slice(i, i + batchSize);
+                const { error } = await supabase
+                    .from('products')
+                    .upsert(chunk, { onConflict: 'model_name' });
+
+                if (error) {
+                    console.error('[API] Supabase batch upsert failed at chunk', i, error);
+                    throw new Error('Database operation failed: ' + error.message);
+                }
+            }
+        }
 
         return NextResponse.json({
             success: true,
             message: 'Import completed successfully',
-            processedRows: data.length - 1,
-            output: result.output
+            processedRows: validRowsCount,
+            output: `Processed ${validRowsCount} products natively to database.`
         });
 
     } catch (error: any) {
         console.error('[API] Import error:', error);
-
-        // Clean up temporary file on error
-        if (csvPath) {
-            try {
-                await unlink(csvPath);
-            } catch (cleanupError) {
-                console.warn('[API] Failed to cleanup temp file on error:', cleanupError);
-            }
-        }
-
         return NextResponse.json(
             { error: error.message || 'Internal server error' },
             { status: 500 }
         );
     }
-}
-
-// Transform sheet data into CSV format for batch_processor.py
-function transformDataToCsv(
-    data: any[][],
-    mapping: { model: string; specifications: string[] },
-    headerRowIndex: number
-): string {
-    const headers = data[headerRowIndex];
-    const rows = data.slice(headerRowIndex + 1);
-
-    // Find column indices based on the new simplified mapping
-    const modelIdx = headers.indexOf(mapping.model);
-    const specIndices = mapping.specifications.map(col => headers.indexOf(col)).filter(idx => idx >= 0);
-
-    console.log('[API] Column mapping:', {
-        modelColumn: mapping.model,
-        modelIdx,
-        specColumns: mapping.specifications,
-        specIndices
-    });
-
-    // Build CSV with format: model,specifications_combined
-    // The Python script will use model + specs to search for competitors
-    const csvRows = ['model,specifications'];
-
-    for (const row of rows) {
-        const model = modelIdx >= 0 ? (row[modelIdx] || '') : '';
-
-        // Combine all specification columns into one text
-        const specsText = specIndices
-            .map(idx => row[idx])
-            .filter(val => val !== undefined && val !== null && String(val).trim())
-            .join(' | ');
-
-        // Skip rows without a model
-        if (!model || String(model).trim() === '') {
-            continue;
-        }
-
-        // Escape CSV values
-        const escapeCsv = (val: string) => {
-            val = String(val);
-            if (val.includes(',') || val.includes('"') || val.includes('\n')) {
-                return `"${val.replace(/"/g, '""')}"`;
-            }
-            return val;
-        };
-
-        csvRows.push([
-            escapeCsv(String(model)),
-            escapeCsv(specsText)
-        ].join(','));
-    }
-
-    console.log('[API] Generated CSV with', csvRows.length - 1, 'rows');
-
-    return csvRows.join('\n');
 }
