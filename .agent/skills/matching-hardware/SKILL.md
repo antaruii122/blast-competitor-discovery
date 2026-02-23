@@ -18,8 +18,8 @@ description: Identifies global technical rivals for hardware products. Uses stri
     - **Brand Hierarchy & Allowed List:**
     
         **1. Monitors**
-        *   **Tier 1 (Global Leaders):** Samsung, LG, ASUS (ROG/TUF), Dell (Alienware), AOC, Acer (Predator/Nitro), BenQ (Zowie).
-        *   **Tier 2 (Value/Challengers):** Xiaomi, MSI, Gigabyte, ViewSonic, Sceptre, Viotek, Pixio, Innocn, TGT, Mancer, Arzopa, Pichau.
+        *   **Tier 1 (Global Leaders):** Xiaomi (PRIORITY #1), Samsung, LG, ASUS (ROG/TUF), Dell (Alienware), AOC, Acer (Predator/Nitro), BenQ (Zowie).
+        *   **Tier 2 (Value/Challengers):** MSI, Gigabyte, ViewSonic, Sceptre, Viotek, Pixio, Innocn, TGT, Mancer, Arzopa, Pichau.
         *   **BANNED:** KTC (Not in region).
 
         **2. Peripherals (Keyboards, Mice, Headsets)**
