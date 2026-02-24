@@ -6,9 +6,14 @@ Construir un motor de paridad técnica global que identifique modelos de hardwar
 **Process:** Global Tech Match (Store) -> On-Demand Local Verification (Web App).
 **CRITICAL RULE:** **Technical Parity >>> Price.** Do not use price as a primary filter. Match the *Exact Specifications* and *Feature Set*. If a competitor costs 2x but is the only technical match, IT IS THE MATCH.
 
+## 🚨 STRICT AGENT EXECUTION RULES (MANDATORY) 🚨
+1. **NO BACKGROUND TERMINAL PROCESSES:** The agent is STRICTLY FORBIDDEN from triggering background terminal commands. If a Python script or command must be executed via `run_command`, the agent MUST set `WaitMsBeforeAsync` to a high value (like 300000ms) to ensure it runs synchronously and finishes before returning. You must NEVER generate a "Background command ID".
+2. **NATIVE SQL ALLOWED FOR QUERIES:** The agent IS ALLOWED to use `mcp_supabase-mcp-server_execute_sql` (native SQL) via the Supabase MCP to query and retrieve information from the database.
+3. **SERPER API HANDLING:** The Google Serper API key is in `webapp/.env.local`. When searching, use this key via synchronous Python scripts (or native tools) only. Never run web scraping tasks in the background.
+
 ## Integrations
-- **Supabase (MCP):** Central data hub (`Competitor_Matches`, `Local_Prices`).
-- **Google Serper / search_web tool:** Global scouting and pricing discovery. **Rule: Use Google Serper first. If unable, fallback to `search_web`.** **BANNED: Writing or running background python/terminal scripts to perform web scraping. You MUST use your native/API search tools directly.**
+- **Supabase (MCP):** Central data hub (`Competitor_Matches`, `Local_Prices`). Use MCP to get information.
+- **Google Serper / search_web tool:** Global scouting and pricing discovery. **Rule: Use Google Serper first.**
 - **Google Sheets:** Input source.
 
 ## Data Schemas

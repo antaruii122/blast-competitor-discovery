@@ -10,6 +10,10 @@ export interface MonitorComparisonRow {
     created_at?: string;
 }
 
+export interface RegionalHierarchy {
+    [country: string]: string[];
+}
+
 /**
  * Load monitor comparisons from Supabase
  */
@@ -52,6 +56,55 @@ export async function loadMonitorComparisons(filters?: {
         return {
             success: false,
             error: error.message || 'Failed to load monitors comparison'
+        };
+    }
+}
+
+/**
+ * Load regional hierarchy (Country -> Retailers) from Supabase
+ */
+export async function loadRegionalHierarchy(): Promise<{
+    success: boolean;
+    data?: RegionalHierarchy;
+    error?: string;
+}> {
+    try {
+        const { data, error } = await supabase
+            .from('monitors_regional')
+            .select('country, retailer_name');
+
+        if (error) {
+            console.error('[Supabase] Error loading regional hierarchy:', error);
+            throw new Error(error.message);
+        }
+
+        const hierarchy: { [key: string]: Set<string> } = {};
+        data?.forEach(item => {
+            if (item.country) {
+                if (!hierarchy[item.country]) {
+                    hierarchy[item.country] = new Set();
+                }
+                if (item.retailer_name) {
+                    hierarchy[item.country].add(item.retailer_name);
+                }
+            }
+        });
+
+        const result: RegionalHierarchy = {};
+        for (const country in hierarchy) {
+            result[country] = Array.from(hierarchy[country]).sort();
+        }
+
+        return {
+            success: true,
+            data: result
+        };
+
+    } catch (error: any) {
+        console.error('[Supabase] Error:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to load regional hierarchy'
         };
     }
 }

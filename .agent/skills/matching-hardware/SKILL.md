@@ -259,7 +259,11 @@ also excessive beyond tolerance guidelines.
 - **Strict Parsing:** Do not guess specs. If a critical spec (e.g., Panel Type) is missing, fail the match or ask for clarification (if interactive).
 - **AI Analysis First:** Use the analysis framework above to evaluate similarity BEFORE running numeric validation.
 - **Context Over Rules:** Guidelines in `category_rules.json` are just that - guidelines. Use engineering judgment.
-- **🚨 SEARCH TOOL DIRECTIVE (CRITICAL):** You are **STRICTLY FORBIDDEN** from using the terminal to run background Python or Bash scripts (like `search_duck.py` or custom scrapers) for web searching. You MUST use the **Google Serper** tool first. If that is unavailable or fails, fallback to the native `search_web` tool directly within the chat.
+- **🚨 SEARCH TOOL DIRECTIVE (CRITICAL):**
+  1. You are **STRICTLY FORBIDDEN** from using the terminal to run background Python or Bash scripts (like `search_duck.py` or custom scrapers) for web searching.
+  2. If using Python to hit the Google Serper API (with `SERPER_API_KEY`), you MUST set `WaitMsBeforeAsync` to a high value (e.g. 300000) to ensure the script runs synchronously and finishes before returning. **NEVER** let a script become a "Background command".
+  3. If API scripts are unfeasible, fallback to the native `search_web` tool directly within the chat.
+  4. **SUPABASE MCP ALLOWED:** You CAN and SHOULD use the Supabase MCP (`execute_sql`) to query and retrieve information from the database whenever needed.
 - **Supabase:** Ensure the `matches_mercado` table exists before pushing.
 
 ## Resources
