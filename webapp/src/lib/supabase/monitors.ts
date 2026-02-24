@@ -10,6 +10,19 @@ export interface MonitorComparisonRow {
     created_at?: string;
 }
 
+export interface RegionalMonitorRow {
+    id: string;
+    your_sku: string;
+    competitor_sku: string;
+    competitor_brand: string;
+    country: string;
+    retailer_name: string;
+    price: number | null;
+    available: boolean;
+    product_page_url: string | null;
+    created_at: string;
+}
+
 export interface RegionalHierarchy {
     [country: string]: string[];
 }
@@ -105,6 +118,41 @@ export async function loadRegionalHierarchy(): Promise<{
         return {
             success: false,
             error: error.message || 'Failed to load regional hierarchy'
+        };
+    }
+}
+
+/**
+ * Load regional monitor data for a specific country and retailer
+ */
+export async function loadRegionalMonitors(country: string, retailer: string): Promise<{
+    success: boolean;
+    data?: RegionalMonitorRow[];
+    error?: string;
+}> {
+    try {
+        const { data, error } = await supabase
+            .from('monitors_regional')
+            .select('*')
+            .eq('country', country)
+            .eq('retailer_name', retailer)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error(`[Supabase] Error loading regional monitors for ${retailer}:`, error);
+            throw new Error(error.message);
+        }
+
+        return {
+            success: true,
+            data: data as RegionalMonitorRow[]
+        };
+
+    } catch (error: any) {
+        console.error('[Supabase] Error:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to load regional monitor data'
         };
     }
 }

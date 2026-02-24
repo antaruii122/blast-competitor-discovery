@@ -154,17 +154,23 @@ export default function Navbar() {
                                         {country}
                                     </MenuItem>,
                                     ...retailers.map(retailer => (
-                                        <MenuItem
+                                        <Link
                                             key={retailer}
-                                            onClick={handleCountryClose}
-                                            sx={{
-                                                pl: 4,
-                                                fontSize: '0.9rem',
-                                                '&:hover': { bgcolor: 'rgba(88, 166, 255, 0.1)' }
-                                            }}
+                                            href={`/regional/${encodeURIComponent(country)}/${encodeURIComponent(retailer)}`}
+                                            passHref
+                                            style={{ textDecoration: 'none', color: 'inherit' }}
                                         >
-                                            {retailer}
-                                        </MenuItem>
+                                            <MenuItem
+                                                onClick={handleCountryClose}
+                                                sx={{
+                                                    pl: 4,
+                                                    fontSize: '0.9rem',
+                                                    '&:hover': { bgcolor: 'rgba(88, 166, 255, 0.1)' }
+                                                }}
+                                            >
+                                                {retailer}
+                                            </MenuItem>
+                                        </Link>
                                     ))
                                 ]).flat()
                             ) : (
