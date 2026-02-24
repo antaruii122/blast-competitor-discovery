@@ -55,12 +55,8 @@ def handle_upload_phase(sku: str, category: str, description: str):
 def handle_matching_phase(your_sku: str, category: str, comp_brand: str, comp_sku: str, comp_url: str, comp_specs: str):
     """
     Phase 2: Competitor Matching. Upserts into Table B ([category]_comparison).
-    Trigger setup_category_tables RPC to ensure the table exists dynamically.
     """
     client = get_supabase_client()
-    
-    # Ensure tables B and C exist for this category
-    client.rpc("setup_category_tables", {"p_category": category}).execute()
     
     table_b_name = f"{category.lower().replace('-', '_').replace(' ', '_')}_comparison"
     payload = {
@@ -74,18 +70,17 @@ def handle_matching_phase(your_sku: str, category: str, comp_brand: str, comp_sk
     res = retry_upsert(client, table_b_name, payload, "your_sku,competitor_sku")
     print(f"Successfully added match {comp_sku} for {your_sku} in {table_b_name} (Table B).")
 
-def handle_pricing_phase(your_sku: str, category: str, comp_sku: str, country: str, available: bool, price: float, retailer_name: str, product_page_url: str):
+def handle_pricing_phase(your_sku: str, category: str, comp_brand: str, comp_sku: str, country: str, available: bool, price: float, retailer_name: str, product_page_url: str):
     """
     Phase 3: Pricing & Availability. Upserts into Table C ([category]_regional).
     """
     client = get_supabase_client()
     
-    client.rpc("setup_category_tables", {"p_category": category}).execute()
-    
     table_c_name = f"{category.lower().replace('-', '_').replace(' ', '_')}_regional"
     payload = {
         "your_sku": your_sku,
         "competitor_sku": comp_sku,
+        "competitor_brand": comp_brand,
         "country": country,
         "available": available,
         "price": price,
@@ -113,13 +108,18 @@ def main():
     
     # Phase 3 Args
     parser.add_argument("--country", help="Country Name")
-    parser.add_argument("--available", type=bool, default=False, help="Availability Boolean")
-    parser.add_argument("--price", type=float, default=None, help="Regional Price if available")
-    parser.add_argument("--retailer-name", help="Retailer name (e.g. wimpi.cl)")
-    parser.add_argument("--product-page-url", help="Specific product page URL on retailer site")
+    parser.add_argument("--available", type=lambda x: (str(x).lower() == 'true'), help="Availability (true/false)")
+    parser.add_argument("--price", type=float, help="Product price")
+    parser.add_argument("--retailer-name", help="Name of the retailer")
+    parser.add_argument("--product-page-url", help="URL of the product page")
+    parser.add_argument("--setup", action="store_true", help="Explicitly allow table creation/initialization if it does not exist")
     
     args = parser.parse_args()
     
+    if args.setup and args.category:
+        client = get_supabase_client()
+        client.rpc("setup_category_tables", {"p_category": args.category}).execute()
+
     if args.phase == "upload":
         if not all([args.sku, args.category, args.description]):
             print("Error: --sku, --category, and --description are required for upload phase.")
@@ -133,10 +133,10 @@ def main():
         handle_matching_phase(args.sku, args.category, args.comp_brand, args.comp_sku, args.comp_url, args.comp_specs)
         
     elif args.phase == "price":
-        if not all([args.sku, args.category, args.comp_sku, args.country, args.retailer_name]):
-            print("Error: --sku, --category, --comp-sku, --country, and --retailer-name are required for price phase.")
+        if not all([args.sku, args.category, args.comp_brand, args.comp_sku, args.country, args.retailer_name]):
+            print("Error: --sku, --category, --comp-brand, --comp-sku, --country, and --retailer-name are required for price phase.")
             sys.exit(1)
-        handle_pricing_phase(args.sku, args.category, args.comp_sku, args.country, args.available, args.price, args.retailer_name, args.product_page_url)
+        handle_pricing_phase(args.sku, args.category, args.comp_brand, args.comp_sku, args.country, args.available, args.price, args.retailer_name, args.product_page_url)
 
 if __name__ == "__main__":
     main()

@@ -14,4 +14,4 @@
 
 ## Constraints
 - **Geography:** South America (Chile, Brazil, Colombia).
-- **Data Persistence:** Supabase `Matches_Mercado` table.
+- **Data Persistence:** Supabase `monitors_comparison` and `monitors_regional` tables.

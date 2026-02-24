@@ -77,10 +77,20 @@
             "infotec.com.pe"
         ],
         "blacklist": [
-            "mercadolibre.com.pe",
-            "linio.com.pe",
-            "falabella.com.pe",
-            "ripley.com.pe"
+            "mercadolibre.pe",
+            "linio.pe",
+            "falabella.pe",
+            "ripley.pe"
+        ]
+    },
+    "uruguay": {
+        "whitelist": [
+            "nnet.com.uy"
+        ],
+        "blacklist": [
+            "mercadolibre.com.uy",
+            "tiendamia.com",
+            "loi.com.uy"
         ]
     }
 }

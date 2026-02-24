@@ -22,6 +22,7 @@ def run_chunk(limit=10):
     manual_skus = ['X16F-PTB156E', 'X19KN', 'X27KF']
     my_monitors_res = supabase.table('my_products').select('sku').ilike('category', '%monitor%').execute()
     monitors = [m['sku'] for m in my_monitors_res.data if m['sku'] not in manual_skus]
+    inserted_count = 0
 
     regional_res = supabase.table('monitors_regional').select('your_sku, competitor_sku').execute()
     already_processed = set(f"{r['your_sku']}-{r['competitor_sku']}" for r in regional_res.data)
@@ -69,15 +70,30 @@ def run_chunk(limit=10):
                     "retailer_name": "winpy.cl",
                     "product_page_url": link.split("?")[0]
                 }
-                supabase.table('monitors_regional').insert(record).execute()
-                print(f"Inserted: {brand} {sku} - Available: {available}")
+                supabase.table('monitors_regional').upsert(record, on_conflict='your_sku,competitor_sku,country,retailer_name').execute()
+                print(f"Inserted: {brand} {sku} - Found on Winpy (Available: {available})")
+                inserted_count += 1
                 inserted = True
                 break
                 
         if not inserted:
             print(f"Not found on winpy.cl: {brand} {sku}")
             
+    # Update discovery_status
+    if inserted_count > 0:
+        discovery_payload = {
+            "category": "monitors",
+            "country": "Chile",
+            "retailer": "winpy.cl",
+            "match_count": inserted_count
+        }
+        try:
+            supabase.table('discovery_status').upsert(discovery_payload, on_conflict='category,country,retailer').execute()
+            print("Updated discovery_status table.")
+        except Exception as e:
+            print(f"Error updating discovery_status: {e}")
+            
     return len(to_process) - len(chunk)
 
 if __name__ == "__main__":
-    run_chunk(15)
+    run_chunk(limit=50)

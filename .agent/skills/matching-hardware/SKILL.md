@@ -94,15 +94,15 @@ For EACH candidate product, you MUST verify:
 ### Step 1: Detect Product Category
 
 From the product specs or name, identify the category:
-- **case** - PC cases, enclosures, chassis
-- **headset** - Gaming headsets, headphones with mic
-- **keyboard** - Mechanical/membrane keyboards
-- **mouse** - Gaming mice, pointing devices
-- **monitor** - Display panels, screens
-- **gpu** - Graphics cards (Nvidia, AMD)
-- **motherboard** - Mainboards (AM4, AM5, LGA1700, etc.)
+- **cases** - PC cases, enclosures, chassis
+- **headsets** - Gaming headsets, headphones with mic
+- **keyboards** - Mechanical/membrane keyboards
+- **mice** - Gaming mice, pointing devices
+- **monitors** - Display panels, screens
+- **gpus** - Graphics cards (Nvidia, AMD)
+- **motherboards** - Mainboards (AM4, AM5, LGA1700, etc.)
 - **cooling** - CPU coolers (air tower, AIO liquid coolers)
-- **gaming_table** - Gaming desks, standing desks
+- **gaming_tables** - Gaming desks, standing desks
 
 ### Step 2: Load Category Verification Guide
 
@@ -159,7 +159,7 @@ Product Input: "Razer Kraken V3 Gaming Headset"
         - Search specifically in Chile, Brazil, Colombia (via `find_local_price`).
         - If found, calculate `Value Gap`.
 4.  **Output:** 
-    - Insert structured result into Supabase `Matches_Mercado`.
+    - Insert structured result into Supabase `monitors_comparison`.
     - Update the original product's `competitor_analysis_status` to 'complete' in the `my_products` table to track progress.
     - **🚨 DATABASE POPULATION RULES (CRITICAL):**
         - `competitor_sku`: MUST be the exact Brand and literal Model Name/Number (e.g., "ASUS VA27EHF", "Xiaomi Mi Monitor 1C", "Gigabyte G27F"). **NEVER** use long generic search descriptions or SEO titles. The name of the monitor IS the competitor SKU.

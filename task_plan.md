@@ -5,7 +5,7 @@
 - [x] **Constitution:** Create `gemini.md` with Schema and Behavior.
 - [ ] **Research:**
     - [ ] Survey "RivalSearchMCP" capabilities (simulated/defined).
-    - [ ] Confirm Supabase table structure for `Matches_Mercado`.
+    - [ ] Confirm Supabase table structure for `monitors_comparison`.
 
 ## Phase 2: Link (Connectivity)
 - [ ] **Verification:**

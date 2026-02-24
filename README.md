@@ -59,6 +59,39 @@ See `webapp/.env.local.template` for required configuration.
 - [x] **Protocol 0**: Backend Intelligence Core (Complete)
 - [ ] **Protocol 1**: Web Application (In Progress)
 
+## AI Execution Prompts
+
+Below are the approved prompt templates for executing the two distinct workflow phases. Use these to instruct the AI agent.
+
+### 1. Phase 1: Catalog Ingestion
+*Use this when uploading a new PDF, Excel, image, or text file containing your products.*
+
+> "Execute **Phase 1 (Catalog Ingestion)** on the attached document.
+> 1. Use the `data-ingestion` skill to extract the exact SKU, summarize the specifications into a single 'description' string, and determine the correct hardware 'category'.
+> 2. Use the `tools/supabase_ingest.py` script with `--phase upload` to insert these products into the `my_products` table.
+> 3. Provide a summary of the SKUs you successfully ingested into the database."
+
+### 2. Phase 2: Global Tech Comparison
+*Use this to find technical equivalents for the products you just uploaded.*
+
+> "Execute **Phase 2 (Global Tech Comparison)** for the **[CATEGORY]** category.
+> 1. Look in the `my_products` table for any items in `[CATEGORY]` where the competitor match hasn't been done yet. Extract my SKUs.
+> 2. Use the `matching-hardware` skill to find ~4 Tier 1 and ~2 Tier 2 technical global rivals for my SKU. Prioritize **[BRAND]** if relevant. 
+>    *   **CRITICAL RULES**: You MUST check the category's `resources/*.md` file first to enforce strict dealbreakers (e.g., Curved vs Flat, Panel Types).
+> 3. Use the `tools/supabase_ingest.py` script with `--phase match` to safely insert the found competitors into the `[category]_comparison` table.
+> 4. Mark my product's analysis status as 'complete' in `my_products`.
+> 5. Provide a summary of the technical matches found."
+
+### 3. Phase 3: Regional Price Discovery
+*Use this to find local prices in LATAM for the competitors we already mapped.*
+
+> "Execute **Phase 3 (Regional Price Discovery)** for **[COUNTRY]** in the **[CATEGORY]** category on the retailer **[RETAILER_DOMAIN]** (e.g. `winpy.cl`).
+> 1. Query the `[category]_comparison` table to get the full list of `competitor_sku` items mapped to my products. **Do not search for new tech matches.**
+> 2. Consult `tools/retailer_config.json` for the **[COUNTRY]** whitelist.
+> 3. Use the Google Serper API logic to scout these *exact* competitor SKUs strictly on **[RETAILER_DOMAIN]**. Exclude marketplaces. Run scripts synchronously.
+> 4. Use the `tools/supabase_ingest.py` script with `--phase price` to safely insert the results into the `[category]_regional` table. Ensure all fields (availability, price, retailer name, URL) are captured accurately.
+> 5. Provide a summary report of the found prices and availability in **[COUNTRY]**."
+
 ## License
 
 Private project - All rights reserved

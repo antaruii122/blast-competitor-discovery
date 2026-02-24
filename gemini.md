@@ -12,7 +12,12 @@ Construir un motor de paridad técnica global que identifique modelos de hardwar
 3. **SERPER API HANDLING:** The Google Serper API key is in `webapp/.env.local`. When searching, use this key via synchronous Python scripts (or native tools) only. Never run web scraping tasks in the background.
 
 ## Integrations
-- **Supabase (MCP):** Central data hub (`Competitor_Matches`, `Local_Prices`). Use MCP to get information.
+- **Supabase (MCP):** Central data hub (`monitors_comparison`, `monitors_regional`). Use MCP to query.
+- **🚨 DATABASE INTEGRITY POLICY:**
+  - **REUSE BEFORE CREATE:** Strictly forbidden to create new tables for an existing category domain.
+  - **EXISTING TABLES ONLY:** Always verify if `[category]_comparison` and `[category]_regional` already exist.
+  - **CANONICAL NAMING:** Use plural, lowercase names for all categories used in database naming (e.g., `monitors` NOT `monitor`).
+  - **PHASE 3 RESTRICTION:** Phase 3 (Pricing) must NEVER trigger schema changes or table creation unless explicitly instructed with a `--setup` flag.
 - **Google Serper / search_web tool:** Global scouting and pricing discovery. **Rule: Use Google Serper first.**
 - **Google Sheets:** Input source.
 
@@ -43,17 +48,28 @@ Construir un motor de paridad técnica global que identifique modelos de hardwar
   - **Tier 1:** Secretlab, Herman Miller, Razer, DXRacer, Noblechairs, Corsair.
   - **Tier 2:** Cougar, ThunderX3, Redragon, Gamdias, Aerocool, Drift, Sharkoon, DT3, Pichau.
 
-### 2. Matching Logic (Decoupled)
-**Step 1: Global Tech Match**
-- Trigger: Import Catalog / New Product.
-- **Philosophy:** Find the "Product Soulmate". Ignore price.
-- Output: Store in `Competitor_Matches`.
+### 2. Workflow Logic (Three Distinct Phases)
+This project separates data ingestion, finding tech competitors, and finding local prices into strictly distinct phases. They should NOT be combined in one prompt.
 
-**Step 2: Local Discovery (On-Demand)**
-- Trigger: Web App User Action.
-- **Geography:** All LATAM (Mexico to South).
-- **Strict Blacklist:** NO Marketplaces (MercadoLibre, Falabella, Paris, Ripley, Amazon). NO Aggregators (Solotodo, Zoom, Knasta).
-- **Whitelist:** Specialized Tech Retailers (PC Factory, Kabum, Cyberpuerta, etc.).
+**Phase 1: Catalog Ingestion**
+- **Trigger:** User uploads new product specs (PDF/Excel/Image).
+- **Execution:** Extract `sku`, `category`, and condense all specs into a `description`.
+- **Output:** Insert the data into `my_products` (Table A).
+
+**Phase 2: Global Tech Comparison**
+- **Trigger:** Identifying competitors for newly ingested categories.
+- **Philosophy:** Find the "Product Soulmate" (technical parity). Ignore price.
+- **Execution:** Find Tier 1 & Tier 2 global competitors matching strict category rules from `resources/[category].md`.
+- **Output:** Insert the found rivals into `[category]_comparison` (Table B).
+- **Completion:** Mark the original product as `complete` in `my_products`.
+
+**Phase 3: Regional Price Discovery**
+- **Trigger:** User wants to find LATAM pricing for competitors we *already* mapped.
+- **Condition:** We ALREADY have the comparison equivalents. Do NOT search for technical equivalents again.
+- **Input:** Query `[category]_comparison` to get the list of `competitor_sku`.
+- **Execution:** Check local availability via Google Serper restricted strictly to a specified retailer domain (e.g. `winpy.cl`) from `retailer_config.json`.
+- **Output:** Insert regional data into `[category]_regional` (Table C). Must include `my_sku`, `competitor_sku`, `competitor_brand`, `country`, `retailer_name`, `available`, `price`, `product_page_url`.
+- **STRICT RULE:** Do not create a new table if one already exists for this category (e.g., use `monitors_regional` if it exists).
 
 ### 3. Tone
 - Technical, Engineering-focused.
