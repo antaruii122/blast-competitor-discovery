@@ -4,6 +4,7 @@ import sys
 import json
 import urllib.request
 import urllib.parse
+import urllib.error
 from supabase import create_client, Client
 import http.client
 
@@ -57,8 +58,13 @@ def is_broken_link(url: str) -> bool:
                 return True
                 
         return False
+    except urllib.error.HTTPError as e:
+        # 403 Forbidden and 503 Service Unavailable are often WAF/Cloudflare bot protection, NOT broken links.
+        if e.code in [403, 503, 429]:
+            return False
+        return True
     except Exception as e:
-        # Timeout, 404, 403, etc are considered broken
+        # Timeout, 404, etc are considered broken
         return True
 
 def find_new_link(brand: str, sku: str) -> str:
@@ -101,11 +107,15 @@ def find_new_link(brand: str, sku: str) -> str:
         
     return None
 
-def verify_and_repair(table_name: str, check_all: bool = False):
+def verify_and_repair(table_name: str, check_all: bool = False, recheck_valid: bool = False):
     client = get_supabase_client()
     
+    # Optional logic to dynamically create link_status if missing could go here, but we assume it's added.
     res = client.table(table_name).select("*").execute()
     data = [r for r in res.data if r.get('competitor_url')]
+    
+    if not recheck_valid:
+        data = [r for r in data if r.get('link_status') != 'valid']
     
     print(f"Found {len(data)} records to verify in {table_name}.")
     
@@ -126,18 +136,28 @@ def verify_and_repair(table_name: str, check_all: bool = False):
             
             new_url = find_new_link(brand, sku)
             if new_url and new_url != url:
-                print(f"  -> Found replacement: {new_url}")
-                # Update Supabase
-                try:
-                    update_res = client.table(table_name).update({"competitor_url": new_url}).eq("id", rid).execute()
-                    print(f"  -> Updated successfully.")
-                    repaired_count += 1
-                except Exception as e:
-                    print(f"  -> Failed to update: {e}")
+                print(f"  -> Testing potential replacement: {new_url} ...", end=" ", flush=True)
+                if not is_broken_link(new_url):
+                    print("OK!")
+                    # Update Supabase with new URL and status
+                    try:
+                        update_res = client.table(table_name).update({"competitor_url": new_url, "link_status": "valid"}).eq("id", rid).execute()
+                        print(f"  -> Updated successfully.")
+                        repaired_count += 1
+                    except Exception as e:
+                        print(f"  -> Failed to update: {e}")
+                else:
+                    print("New link is also broken! Marking as broken.")
+                    client.table(table_name).update({"link_status": "broken"}).eq("id", rid).execute()
             else:
-                print("  -> Could not find a suitable replacement.")
+                print("  -> Could not find a suitable replacement. Marking as broken.")
+                client.table(table_name).update({"link_status": "broken"}).eq("id", rid).execute()
         else:
-            print("OK.")
+            print("OK. Marking as valid.")
+            try:
+                client.table(table_name).update({"link_status": "valid"}).eq("id", rid).execute()
+            except Exception as e:
+                pass
             
     print(f"\nVerification Complete!")
     print(f"Total checked: {len(data)}")
@@ -147,6 +167,7 @@ def verify_and_repair(table_name: str, check_all: bool = False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Link Validator and Repair Tool")
     parser.add_argument("--table", required=True, help="Supabase table name to verify (e.g., monitors_comparison)")
+    parser.add_argument("--recheck-valid", action="store_true", help="Recheck links that are already marked as valid")
     
     args = parser.parse_args()
-    verify_and_repair(args.table)
+    verify_and_repair(args.table, recheck_valid=args.recheck_valid)
