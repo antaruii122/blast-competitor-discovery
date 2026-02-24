@@ -187,6 +187,7 @@ Ask yourself: **"What would make a customer reject this alternative?"**
 
 **For Monitors:**
 - Same panel technology? (IPS vs VA vs TN - usually critical)
+- Same curvature? (Flat vs Curved - **CRITICAL DEALBREAKER**)
 - Same use case? (gaming vs productivity vs creative work)
 - Similar refresh rate tier? (60Hz vs 144Hz+ vs 240Hz+)
 

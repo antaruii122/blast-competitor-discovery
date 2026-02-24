@@ -2,27 +2,23 @@
 
 > **CRITICAL INSTRUCTION:** Before assessing this product, you MUST check `parity_rules.md` to define the strict Dealbreakers (Critical vs Variable specs). The points and rules below are for **qualitative context** only. Do NOT use them to define what is strict vs variable.
 
-## 1. Qualitative Context & "Product Soul"
+### 🚨 STRICT DEALBREAKERS (MUST MATCH)
+**If these do not match, AUTO-REJECT immediately.**
 
-### Aspect Ratio (12 points)
-**Definition:** The width-to-height ratio of the screen.
+#### 1. Curvature (Flat vs Curved)
+**Definition:** Is the screen physically curved or flat?
+- **Flat ≠ Curved** → **AUTO-REJECT**
+- Customers specifically look for curved for immersion or flat for color accuracy/multi-monitor alignment.
 
-**Values:**
-- `16:9` - Standard widescreen (1920×1080, 2560×1440, 3840×2160)
-- `21:9` - Ultrawide (3440×1440, 3840×1600)
-- `32:9` - Super ultrawide (5120×1440)
-- `16:10` - Productivity (1920×1200, 2560×1600)
+#### 2. Panel Type
+**Definition:** The LCD technology (IPS, VA, TN, OLED).
+- **IPS ≠ VA ≠ TN ≠ OLED** → **AUTO-REJECT**
+- Visual performance (blacks, viewing angles, response) is fundamentally different.
 
-**Why Critical:** Aspect ratio defines ENTIRE USE CASE.
-- 16:9 = Universal compatibility (gaming, office, media)
-- 21:9 = Immersive gaming, productivity multi-window
-- 32:9 = Flight/racing sim, trading, replaces dual monitors
-- 16:10 = Productivity (extra vertical space)
-
-**Rejection Rule:**
-- 16:9 ≠ 21:9 ≠ 32:9 → **AUTO-REJECT**
-- Competitive gamers REJECT ultrawide (esports compatibility issues)
-- Ultrawide buyers specifically want immersion
+#### 3. Aspect Ratio
+**Definition:** 16:9 vs 21:9 vs 32:9.
+- **16:9 ≠ 21:9 ≠ 32:9** → **AUTO-REJECT**
+- Defines the entire use case.
 
 ---
 
@@ -161,14 +157,15 @@
 
 ---
 
+---
+
 ## 5. Verification Checklist
 
 ### Pre-Search
-- [ ] Identify panel type (IPS/VA/TN/OLED) **CRITICAL**
-- [ ] Determine use case (competitive/general gaming/creative/productivity)
-- [ ] Note resolution (1080p/1440p/4K) **STRICT MATCH**
-- [ ] Define refresh rate tier (60-75Hz/120-165Hz/240Hz+)
-- [ ] Check size preference (24"/27"/32"+)
+- [ ] **Curvature:** Is the target Flat or Curved? **STRICT MATCH**
+- [ ] **Panel Type:** IPS, VA, TN, or OLED? **STRICT MATCH**
+- [ ] **Resolution:** 1080p, 1440p, or 4K? **STRICT MATCH**
+- [ ] **Refresh Tier:** 60Hz, 144-180Hz, or 240Hz+?
 
 ### During Search
 - [ ] Find official product page
