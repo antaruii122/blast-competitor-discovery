@@ -92,6 +92,16 @@ Below are the approved prompt templates for executing the two distinct workflow 
 > 4. Use the `tools/supabase_ingest.py` script with `--phase price` to safely insert the results into the `[category]_regional` table. Ensure all fields (availability, price, retailer name, URL) are captured accurately.
 > 5. Provide a summary report of the found prices and availability in **[COUNTRY]**."
 
+### 4. Phase 4: Bottom-Up Regional Discovery (Store Scraping)
+*Use this when the Top-Down global search (Phase 2 & 3) didn't find enough local competitors, and you want to scrape exactly what a specific retailer has in stock to find matches.*
+
+> "Execute **Phase 4 (Bottom-Up Regional Discovery)** on the retailer **[RETAILER_URL]** for the **[CATEGORY]** category.
+> 1. Scrape the retailer's catalog to extract all available products and their specifications.
+> 2. Filter the scraped products to ONLY consider the following competitor brands: **Samsung, Xiaomi, MSI, Perseo, Cooler Master, Fastrock, Acer**.
+> 3. Compare these local models against my products in the `my_products` table based on hardware parity.
+> 4. For each of my SKUs, select a **maximum of 1 or 2** of the absolute best matches from the scraped data. If you find one excellent match, one is enough. Do not exceed two.
+> 5. Add these new relationships to `[category]_comparison` and insert the regional data (URL, price, availability) directly into `[category]_regional`."
+
 ## License
 
 Private project - All rights reserved

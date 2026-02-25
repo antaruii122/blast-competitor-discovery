@@ -48,12 +48,26 @@ def fetch_data_from_serper(sku, brand, retailer="nnet.com.uy"):
         res = conn.getresponse()
         search_data = json.loads(res.read().decode('utf-8'))
         
+        # sku lowercase words to check
+        sku_words = set(word.lower() for word in sku.split())
+
         for item in search_data.get('organic', []):
             link = item.get('link', '')
             if retailer in link:
-                product_url = link
                 snippet = item.get('snippet', '').lower()
                 title = item.get('title', '').lower()
+                
+                # Validation: it must be a specific product page, not a listing page.
+                # A good product page title usually contains the SKU or brand+specs.
+                # If the title is just a massive list of brands or generic "Productos", skip it.
+                title_words = set(re.findall(r'\b\w+\b', title))
+                
+                # Require at least some intersection between the SKU words and the title words 
+                # (to ensure it's not a generic listing)
+                if not sku_words.intersection(title_words) and not brand.lower() in title:
+                     continue # Doesn't look like the specific product
+                
+                product_url = link
                 
                 # Basic availability check
                 if 'agotado' in snippet or 'sin stock' in snippet or 'agotado' in title:

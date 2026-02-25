@@ -14,11 +14,13 @@ Construir un motor de paridad técnica global que identifique modelos de hardwar
 ## Integrations
 - **Supabase (MCP):** Central data hub (`monitors_comparison`, `monitors_regional`). Use MCP to query.
 - **🚨 DATABASE INTEGRITY POLICY:**
+  - **THE ONLY FUCKING RULE FOR REGIONAL DATA:** If the `product_page_url` is `null` (meaning we cannot find the actual product page on the regional store), **DO NOT CREATE THE ROW.** If a row already exists and the URL is found to be dead, soft-404, or unfindable, you MUST **DELETE THE ROW ENTRY ENTIRELY.** Never leave a row with a `null` product page URL.
+  - **NO WEB BROWSERS:** You are strictly forbidden from using web browser subagents, Playwright, Puppeteer, Selenium, or any other browser automation. All data gathering must be done via raw HTTP requests, API calls (like Google Serper), or native Python scraping (BeautifulSoup/Requests). NEVER use a browser.
   - **REUSE BEFORE CREATE:** Strictly forbidden to create new tables for an existing category domain.
   - **EXISTING TABLES ONLY:** Always verify if `[category]_comparison` and `[category]_regional` already exist.
   - **CANONICAL NAMING:** Use plural, lowercase names for all categories used in database naming (e.g., `monitors` NOT `monitor`).
   - **PHASE 3 RESTRICTION:** Phase 3 (Pricing) must NEVER trigger schema changes or table creation unless explicitly instructed with a `--setup` flag.
-- **Google Serper / search_web tool:** Global scouting and pricing discovery. **Rule: Use Google Serper first.**
+- **Google Serper / search_web tool:** Global scouting and pricing discovery. **Rule: Google Serper API is the FIRST option. `search_web` MUST ONLY be used as a second option or fallback for reinforcing information.**
 - **Google Sheets:** Input source.
 
 ## Data Schemas

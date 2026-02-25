@@ -263,7 +263,7 @@ also excessive beyond tolerance guidelines.
 - **🚨 SEARCH TOOL DIRECTIVE (CRITICAL):**
   1. You are **STRICTLY FORBIDDEN** from using the terminal to run background Python or Bash scripts (like `search_duck.py` or custom scrapers) for web searching.
   2. If using Python to hit the Google Serper API (with `SERPER_API_KEY`), you MUST set `WaitMsBeforeAsync` to a high value (e.g. 300000) to ensure the script runs synchronously and finishes before returning. **NEVER** let a script become a "Background command".
-  3. If API scripts are unfeasible, fallback to the native `search_web` tool directly within the chat.
+  3. The native `search_web` tool MUST ONLY be used as a SECOND option or fallback. If API scripts using Serper are unfeasible, fallback to `search_web` for reinforcing information.
   4. **SUPABASE MCP ALLOWED:** You CAN and SHOULD use the Supabase MCP (`execute_sql`) to query and retrieve information from the database whenever needed.
 - **Supabase:** Ensure the `matches_mercado` table exists before pushing.
 
